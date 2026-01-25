@@ -1,27 +1,33 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminCategories from "./pages/AdminCategories";
 import AdminBooks from "./pages/AdminBooks";
+import AdminUsers from "./pages/AdminUsers";
 import Catalog from "./pages/Catalog";
 import BookDetails from "./pages/BookDetails";
-import AdminUsers from "./pages/AdminUsers";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
     <>
       <Navbar />
 
-      <Route
+      <Routes>
+        {/* Public */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/books/:id" element={<BookDetails />} />
 
+        {/* User */}
         <Route
           path="/dashboard/user"
           element={
@@ -31,6 +37,7 @@ export default function App() {
           }
         />
 
+        {/* Admin */}
         <Route
           path="/dashboard/admin"
           element={
@@ -39,22 +46,34 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
-      <Route
+
+        <Route
           path="/dashboard/admin/categories"
           element={
             <ProtectedRoute role="admin">
-            <AdminCategories />
+              <AdminCategories />
             </ProtectedRoute>
           }
         />
-        <Route path="/dashboard/admin/books" element={ <ProtectedRoute role="admin"> <AdminBooks /> </ProtectedRoute> }/>
 
-        <Route path="/dashboard/admin/users" element={ <ProtectedRoute role="admin"> <AdminUsers /> </ProtectedRoute> } />
+        <Route
+          path="/dashboard/admin/books"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminBooks />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route path="/catalog" element={<Catalog />} />
-      <Route path="/books/:id" element={<BookDetails />} />
-
+        <Route
+          path="/dashboard/admin/users"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
     </>
   );
 }
