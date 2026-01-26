@@ -33,30 +33,27 @@ exports.deleteBook = async (req, res) => {
 };
 
 exports.getPublicBooks = async (req, res) => {
-  const { q, category, language } = req.query;
+  try {
+    const books = await Book.aggregate([
+      { $sample: { size: 5 } } // 🎯 5 livres AU HASARD
+    ]);
 
-  const filter = {};
-
-  if (q) {
-    filter.$or = [
-      { title: { $regex: q, $options: "i" } },
-      { authors: { $regex: q, $options: "i" } },
-      { isbn: { $regex: q, $options: "i" } },
-    ];
+    res.json(books);
+  } catch (error) {
+    console.error("GET RANDOM BOOKS ERROR:", error);
+    res.status(500).json({ message: "Erreur serveur livres" });
   }
-
-  if (category) filter.category = category;
-  if (language) filter.language = language;
-
-  const books = await Book.find(filter)
-    .populate("category")
-    .sort({ createdAt: -1 });
-
-  res.json(books);
 };
 
 exports.getPublicBookById = async (req, res) => {
-  const book = await Book.findById(req.params.id).populate("category");
-  if (!book) return res.status(404).json({ message: "Livre introuvable" });
-  res.json(book);
+  try {
+    const book = await Book.findById(req.params.id).populate("category");
+    if (!book) {
+      return res.status(404).json({ message: "Livre introuvable" });
+    }
+    res.json(book);
+  } catch (error) {
+    console.error("GET PUBLIC BOOK ERROR:", error);
+    res.status(500).json({ message: "Erreur serveur livre" });
+  }
 };
