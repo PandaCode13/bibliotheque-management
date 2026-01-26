@@ -34,14 +34,65 @@ exports.deleteBook = async (req, res) => {
 
 exports.getPublicBooks = async (req, res) => {
   try {
-    const books = await Book.aggregate([
-      { $sample: { size: 5 } } // 🎯 5 livres AU HASARD
-    ]);
+    const { q, category, language } = req.query;
+    const isAdmin = req.user?.role === "admin";
+    const isUser = req.user?.role === "user";
+
+    const filter = {};
+
+    // 🔍 Recherche texte
+    if (q) {
+      filter.$or = [
+        { title: { $regex: q, $options: "i" } },
+        { authors: { $regex: q, $options: "i" } },
+        { isbn: { $regex: q, $options: "i" } },
+        { category: {$regex: q, $options: "i"}}
+      ];
+    }
+
+    // 🏷️ Catégorie
+    if (category) {
+      filter.category = category;
+    }
+
+    // 🌍 Langue
+    if (language) {
+      filter.language = { $regex: language, $options: "i" };
+    }
+
+    let books;
+
+    if (isAdmin || isUser) {
+      // ADMIN → TOUS LES LIVRES AVEC FILTRES
+      books = await Book.find(filter)
+        .populate("category")
+        .sort({ createdAt: -1 });
+    } else {
+      // USER / PUBLIC → FILTRÉS + RANDOM
+      books = await Book.aggregate([
+        { $match: filter },
+        { $sample: { size: 12 } },
+        {
+          $lookup: {
+            from: "categories",
+            localField: "category",
+            foreignField: "_id",
+            as: "category",
+          },
+        },
+        {
+          $unwind: {
+            path: "$category",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+      ]);
+    }
 
     res.json(books);
   } catch (error) {
-    console.error("GET RANDOM BOOKS ERROR:", error);
-    res.status(500).json({ message: "Erreur serveur livres" });
+    console.error("CATALOG FILTER ERROR:", error);
+    res.status(500).json({ message: "Erreur serveur catalogue" });
   }
 };
 

@@ -13,14 +13,19 @@ export default function BookDetails() {
   if (!book) return <p>Chargement...</p>;
 
   return (
-    <div>
-      <h2>{book.title}</h2>
-      <p><strong>Auteurs :</strong> {book.authors.join(", ")}</p>
-      <p><strong>ISBN :</strong> {book.isbn}</p>
-      <p><strong>Catégorie :</strong> {book.category?.name}</p>
-      <p><strong>Langue :</strong> {book.language}</p>
-      <p><strong>Description :</strong> {book.description}</p>
-      <p><strong>Disponibles :</strong> {book.availableCopies}</p>
-    </div>
+    <>
+      <div className="text">
+        <h2>{book.title}</h2>
+        <p><strong>Auteurs :</strong> {book.authors.join(", ")}</p>
+        <p><strong>ISBN :</strong> {book.isbn}</p>
+        <p><strong>Catégorie :</strong> {book.category?.name}</p>
+        <p><strong>Langue :</strong> {book.language}</p>
+        <p><strong>Description :</strong> {book.description}</p>
+        <p><strong>Disponibles :</strong> {book.availableCopies}</p>
+      </div>
+      <div className="image">
+        <img src={book.coverImage} alt="" />
+      </div>
+    </>
   );
 }

@@ -11,31 +11,88 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={{ padding: 10, borderBottom: "1px solid #ccc" }}>
-      <Link to="/">Accueil</Link>{" | "}
+    <nav className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        
+        {/* LOGO / TITLE */}
+        <span className="text-lg font-bold text-indigo-600">
+          Biblio
+        </span>
 
-      {!token && (
-        <>
-          <Link to="/login">Connexion</Link>{" | "}
-          <Link to="/register">Inscription</Link>
-        </>
-      )}
+        {/* LINKS */}
+        <div className="flex items-center gap-6 text-sm font-medium">
 
-      {token && role === "user" && (
-        <Link to="/dashboard/user">Dashboard User</Link>
-      )}
+          {/* NON CONNECTÉ */}
+          {!token && (
+            <>
+              <Link to="/" className="text-gray-600 hover:text-indigo-600 transition">
+                Accueil
+              </Link>
+              <Link to="/login" className="text-gray-600 hover:text-indigo-600 transition">
+                Connexion
+              </Link>
+              <Link to="/register" className="text-gray-600 hover:text-indigo-600 transition">
+                Inscription
+              </Link>
+            </>
+          )}
 
-      {token && role === "admin" && (
-        <Link to="/dashboard/admin">Dashboard Admin</Link>
-      )}
+          {/* USER CONNECTÉ */}
+          {token && role === "user" && (
+            <>
+              <Link to="/dashboard/user" className="text-gray-600 hover:text-indigo-600 transition">
+                Dashboard
+              </Link>
+              <Link to="/catalog" className="text-gray-600 hover:text-indigo-600 transition">
+                Catalogue
+              </Link>
+              <Link to="/favorites" className="text-gray-600 hover:text-indigo-600 transition">
+                Favoris
+              </Link>
+              <Link to="/profile" className="text-gray-600 hover:text-indigo-600 transition">
+                Profil
+              </Link>
+              <button
+                onClick={logout}
+                className="ml-4 px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+              >
+                Déconnexion
+              </button>
+            </>
+          )}
 
-      {token && (
-        <>
-          {" | "}
-          <button onClick={logout}>Déconnexion</button>
-          <Link to="/catalog">Catalogue</Link>{" | "}
-        </>
-      )}
+          {/* ADMIN CONNECTÉ */}
+          {token && role === "admin" && (
+            <>
+              <Link to="/dashboard/admin" className="text-gray-600 hover:text-indigo-600 transition">
+                Dashboard
+              </Link>
+              <Link to="/catalog" className="text-gray-600 hover:text-indigo-600 transition">
+                Catalogue
+              </Link>
+              <Link to="/dashboard/admin/users" className="text-gray-600 hover:text-indigo-600 transition">
+                Utilisateurs
+              </Link>
+              <Link to="/dashboard/admin/books" className="text-gray-600 hover:text-indigo-600 transition">
+                Livres
+              </Link>
+              <Link to="/dashboard/admin/stats" className="text-gray-600 hover:text-indigo-600 transition">
+                Stats
+              </Link>
+              <Link to="/profile" className="text-gray-600 hover:text-indigo-600 transition">
+                Profil
+              </Link>
+              <button
+                onClick={logout}
+                className="ml-4 px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
+              >
+                Déconnexion
+              </button>
+            </>
+          )}
+
+        </div>
+      </div>
     </nav>
   );
 }
