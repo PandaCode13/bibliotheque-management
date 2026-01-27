@@ -42,7 +42,7 @@ export default function Navbar() {
               <Link to="/UserCatalog" className="nav-link">
                 Catalogue
               </Link>
-              <Link to="/UserFavorites" className="nav-link">
+              <Link to="/favorites" className="nav-link">
                 Favoris
               </Link>
               <Link to="/UserProfile" className="nav-link">
