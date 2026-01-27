@@ -10,4 +10,6 @@ router.put("/:id/role", auth, isAdmin, controller.updateUserRole);
 router.patch("/:id/status", auth, isAdmin, controller.toggleUserStatus);
 router.delete("/:id", auth, isAdmin, controller.deleteUser);
 
+router.post("/favorites/:id", auth, controller.toggleFavorite);
+
 module.exports = router;

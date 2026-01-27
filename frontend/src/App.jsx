@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 // USER
 import UserDashboard from "./pages/UserDashboard";
 import UserCatalog from "./pages/UserCatalogue";
+import UserFavorites from "./pages/UserFavorites";
 
 // ADMIN
 import AdminDashboard from "./pages/AdminDashboard";
@@ -51,6 +52,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        
+        <Route path="/favorites" element={ <ProtectedRoute role="user"> <UserFavorites /> </ProtectedRoute> } />
 
         {/* ADMIN */}
         <Route

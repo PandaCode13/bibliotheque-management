@@ -25,6 +25,20 @@ const userSchema = new mongoose.Schema(
     wishlist: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
     ],
+
+    votes: [
+      {
+        book: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Book",
+      },
+        value: {
+          type: Number,
+          enum: [1, -1], // 1 = like, -1 = dislike
+        },
+      },
+    ],
+
   },
   { timestamps: true }
 );

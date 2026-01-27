@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPublicBooks } from "../services/bookService";
-import { getCategories } from "../services/categoryService";
 import { Link } from "react-router-dom";
+  import { getPublicCategories } from "../services/categoryService";
 
 export default function Catalog() {
   const [books, setBooks] = useState([]);
@@ -12,15 +12,20 @@ export default function Catalog() {
     language: "",
   });
 
-  const load = async () => {
-    const res = await getPublicBooks(filters);
-    setBooks(res.data);
-  };
+const load = async () => {
+  const params = {};
 
-  useEffect(() => {
-    load();
-    getCategories().then((r) => setCategories(r.data));
-  }, []);
+  if (filters.q.trim() !== "") params.q = filters.q.trim();
+  if (filters.category) params.category = filters.category;
+  if (filters.language.trim() !== "") params.language = filters.language.trim();
+
+  const res = await getPublicBooks(params);
+  setBooks(res.data);
+};
+
+useEffect(() => {
+  load();
+}, [filters]);
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">

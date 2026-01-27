@@ -12,3 +12,17 @@ export const getPublicBooks = (params = {}) =>
 
 export const getPublicBookById = (id) =>
   api.get(`/books/public/${id}`);
+
+
+/* NOUVEAU */
+export const likeBook = (id) =>
+  api.post(`/books/${id}/like`);
+
+export const dislikeBook = (id) =>
+  api.post(`/books/${id}/dislike`);
+
+export const getCommentsByBook = (id) =>
+  api.get(`/books/${id}/comments`);
+
+export const addComment = (id, text) =>
+  api.post(`/books/${id}/comments`, { text });

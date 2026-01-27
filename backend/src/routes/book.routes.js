@@ -13,4 +13,14 @@ router.get("/", authOptional, controller.getAllBooksAdmin);
 router.put("/:id", authOptional, controller.updateBook);
 router.delete("/:id", authOptional, controller.deleteBook);
 
+const auth = require("../middlewares/auth.middleware");
+
+/* LIKES / DISLIKES */
+router.post("/:id/like", auth, controller.likeBook);
+router.post("/:id/dislike", auth, controller.dislikeBook);
+
+/* COMMENTS */
+router.post("/:id/comments", auth, controller.addComment);
+router.get("/:id/comments", controller.getCommentsByBook);
+
 module.exports = router;

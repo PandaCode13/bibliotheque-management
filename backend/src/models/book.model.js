@@ -40,6 +40,10 @@ const bookSchema = new mongoose.Schema(
       average: { type: Number, default: 0 },
       count: { type: Number, default: 0 },
     },
+
+    likesCount: { type: Number, default: 0 },
+    
+    dislikesCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

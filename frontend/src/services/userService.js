@@ -7,3 +7,5 @@ export const toggleUserStatus = (id) =>
   api.patch(`/users/${id}/status`);
 export const deleteUser = (id) =>
   api.delete(`/users/${id}`);
+export const toggleFavorite = (bookId) =>
+  api.post(`/users/favorites/${bookId}`);

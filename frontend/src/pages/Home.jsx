@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getPublicBooks } from "../services/bookService";
+import BookCover from "./BookCover";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -62,15 +63,7 @@ export default function Home() {
               key={book._id}
               className="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition overflow-hidden"
             >
-              <img
-                src={
-                  book.coverImage ||
-                  "https://via.placeholder.com/200x300?text=Livre"
-                }
-                alt={book.title}
-                className="h-56 w-full object-cover"
-              />
-
+            <BookCover src={book.coverImage} title={book.title} />
               <div className="p-4">
                 <h3 className="font-semibold text-sm text-[#0F4C5C] truncate">
                   {book.title}

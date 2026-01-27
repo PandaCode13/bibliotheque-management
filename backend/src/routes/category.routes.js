@@ -9,5 +9,6 @@ router.get("/", auth, isAdmin, controller.getCategories);
 router.post("/", auth, isAdmin, controller.createCategory);
 router.put("/:id", auth, isAdmin, controller.updateCategory);
 router.delete("/:id", auth, isAdmin, controller.deleteCategory);
+router.get("/public", controller.getPublicCategories);
 
 module.exports = router;

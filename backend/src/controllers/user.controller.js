@@ -29,3 +29,19 @@ exports.deleteUser = async (req, res) => {
   await User.findByIdAndDelete(req.params.id);
   res.json({ message: "Utilisateur supprimé" });
 };
+
+exports.toggleFavorite = async (req, res) => {
+  const user = await User.findById(req.user.id);
+  const bookId = req.params.id;
+
+  const index = user.favoriteBooks.indexOf(bookId);
+
+  if (index === -1) {
+    user.favoriteBooks.push(bookId);
+  } else {
+    user.favoriteBooks.splice(index, 1);
+  }
+
+  await user.save();
+  res.json(user.favoriteBooks);
+};
