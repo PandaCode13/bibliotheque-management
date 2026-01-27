@@ -11,81 +11,70 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-6 py-4">
+    <nav className="bg-[#FAFAF9] border-b border-[#DDE5E4] px-6 py-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        
-        {/* LOGO / TITLE */}
-        <span className="text-lg font-bold text-indigo-600">
-          Biblio
-        </span>
 
-        {/* LINKS */}
+        {/* LOGO */}
+        <Link
+          to="/"
+          className="text-xl font-bold tracking-wide text-[#0F4C5C]"
+        >
+          Biblio
+        </Link>
+
         <div className="flex items-center gap-6 text-sm font-medium">
 
-          {/* NON CONNECTÉ */}
+          {/* PUBLIC */}
           {!token && (
             <>
-              <Link to="/" className="text-gray-600 hover:text-indigo-600 transition">
-                Accueil
-              </Link>
-              <Link to="/login" className="text-gray-600 hover:text-indigo-600 transition">
-                Connexion
-              </Link>
-              <Link to="/register" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/" className="nav-link">Accueil</Link>
+              <Link to="/login" className="nav-link">Connexion</Link>
+              <Link
+                to="/register"
+                className="px-4 py-2 rounded-full border border-[#9DBEBB] text-[#0F4C5C]"
+              >
                 Inscription
               </Link>
             </>
           )}
 
-          {/* USER CONNECTÉ */}
+          {/* USER */}
           {token && role === "user" && (
             <>
-              <Link to="/dashboard/user" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/UserDashboard" className="nav-link">
                 Dashboard
               </Link>
-              <Link to="/catalog" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/UserCatalog" className="nav-link">
                 Catalogue
               </Link>
-              <Link to="/favorites" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/UserFavorites" className="nav-link">
                 Favoris
               </Link>
-              <Link to="/profile" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/UserProfile" className="nav-link">
                 Profil
               </Link>
-              <button
-                onClick={logout}
-                className="ml-4 px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
-              >
+              <button onClick={logout} className="btn-primary">
                 Déconnexion
               </button>
             </>
           )}
 
-          {/* ADMIN CONNECTÉ */}
+          {/* ADMIN */}
           {token && role === "admin" && (
             <>
-              <Link to="/dashboard/admin" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/AdminDashboard" className="nav-link">
                 Dashboard
               </Link>
-              <Link to="/catalog" className="text-gray-600 hover:text-indigo-600 transition">
-                Catalogue
-              </Link>
-              <Link to="/dashboard/admin/users" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/AdminUsers" className="nav-link">
                 Utilisateurs
               </Link>
-              <Link to="/dashboard/admin/books" className="text-gray-600 hover:text-indigo-600 transition">
+              <Link to="/AdminBooks" className="nav-link">
                 Livres
               </Link>
-              <Link to="/dashboard/admin/stats" className="text-gray-600 hover:text-indigo-600 transition">
-                Stats
+              <Link to="/AdminCategories" className="nav-link">
+                Catégories
               </Link>
-              <Link to="/profile" className="text-gray-600 hover:text-indigo-600 transition">
-                Profil
-              </Link>
-              <button
-                onClick={logout}
-                className="ml-4 px-4 py-2 rounded-md bg-indigo-600 text-white hover:bg-indigo-700 transition"
-              >
+              <button onClick={logout} className="btn-primary">
                 Déconnexion
               </button>
             </>

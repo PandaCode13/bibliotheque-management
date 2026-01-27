@@ -23,21 +23,21 @@ export default function Catalog() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-red-800">
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
+    <div className="min-h-screen bg-[#FAFAF9]">
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-12">
 
         {/* HEADER */}
-        <header className="mb-2">
-          <h1 className="text-3xl font-bold text-gray-800">
+        <header>
+          <h1 className="text-3xl font-bold text-[#0F4C5C]">
             Catalogue
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="text-gray-600 mt-2">
             Explorez notre collection de livres
           </p>
         </header>
 
         {/* FILTRES */}
-        <section className="bg-white rounded-xl shadow p-6">
+        <section className="bg-white rounded-2xl shadow-sm p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
             <input
@@ -47,7 +47,8 @@ export default function Catalog() {
               onChange={(e) =>
                 setFilters({ ...filters, q: e.target.value })
               }
-              className="h-[52px] px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="h-[52px] px-4 border border-gray-300 rounded-lg 
+                         focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
             />
 
             <select
@@ -55,7 +56,8 @@ export default function Catalog() {
               onChange={(e) =>
                 setFilters({ ...filters, category: e.target.value })
               }
-              className="h-[52px] px-4 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="h-[52px] px-4 border border-gray-300 rounded-lg bg-white
+                         focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
             >
               <option value="">Toutes les catégories</option>
               {categories.map((c) => (
@@ -72,12 +74,15 @@ export default function Catalog() {
               onChange={(e) =>
                 setFilters({ ...filters, language: e.target.value })
               }
-              className="h-[52px] px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="h-[52px] px-4 border border-gray-300 rounded-lg 
+                         focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
             />
 
             <button
               onClick={load}
-              className="h-[52px] bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition"
+              className="h-[52px] bg-[#0F4C5C] text-[#FAFAF9] 
+                         rounded-full font-semibold 
+                         hover:bg-[#0C3E4B] transition"
             >
               Filtrer
             </button>
@@ -88,15 +93,17 @@ export default function Catalog() {
         {/* LIVRES */}
         <section>
           {books.length === 0 ? (
-            <div className="bg-white rounded-lg p-10 text-center text-gray-500">
+            <div className="bg-white rounded-2xl p-10 text-center text-gray-500 shadow-sm">
               Aucun livre trouvé.
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
               {books.map((b) => (
                 <div
                   key={b._id}
-                  className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+                  className="bg-white rounded-2xl shadow-sm 
+                             hover:shadow-lg hover:-translate-y-1 
+                             transition overflow-hidden"
                 >
                   <img
                     src={
@@ -108,7 +115,7 @@ export default function Catalog() {
                   />
 
                   <div className="p-4 space-y-2">
-                    <h3 className="font-semibold text-gray-800 truncate">
+                    <h3 className="font-semibold text-[#0F4C5C] truncate">
                       {b.title}
                     </h3>
 
@@ -118,7 +125,8 @@ export default function Catalog() {
 
                     <Link
                       to={`/books/${b._id}`}
-                      className="inline-block text-sm font-medium text-indigo-600 hover:underline"
+                      className="inline-block text-sm font-medium 
+                                 text-[#0F4C5C] hover:text-[#6FAFB0] transition"
                     >
                       Voir détails →
                     </Link>

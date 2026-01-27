@@ -13,32 +13,35 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-[#FAFAF9] flex flex-col">
       {/* HERO */}
-      <section className="bg-indigo-600 text-white py-20">
+      <section className="bg-[#0F4C5C] text-white py-24">
         <div className="container mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-wide">
             Bibliothèque Numérique
           </h1>
-          <p className="text-lg md:text-xl mb-8 text-indigo-100">
-            Découvrez et empruntez des livres en ligne
+          <p className="text-lg md:text-xl mb-10 text-[#CFE6E5]">
+            Explorez le savoir, découvrez de nouveaux horizons
           </p>
 
           <Link
             to="/login"
-            className="inline-block bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold shadow hover:bg-gray-100 transition"
+            className="inline-block bg-[#9DBEBB] text-[#0F4C5C] px-10 py-3 rounded-full font-semibold shadow-md hover:bg-[#8BAFAE] transition"
           >
-            Connectez-vous
+            Commencer l’exploration
           </Link>
         </div>
       </section>
 
       {/* LIVRES */}
-      <section className="container mx-auto px-6 py-14 flex-1">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+      <section className="container mx-auto px-6 py-16 flex-1">
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-bold text-[#0F4C5C]">
             Nouveautés
           </h2>
+          <p className="text-sm text-gray-500 mt-2">
+            Une sélection pour nourrir votre curiosité
+          </p>
         </div>
 
         {loading && (
@@ -53,11 +56,11 @@ export default function Home() {
           </p>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
           {books.map((book) => (
             <div
               key={book._id}
-              className="bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
+              className="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition overflow-hidden"
             >
               <img
                 src={
@@ -65,11 +68,11 @@ export default function Home() {
                   "https://via.placeholder.com/200x300?text=Livre"
                 }
                 alt={book.title}
-                className="h-52 w-full object-cover"
+                className="h-56 w-full object-cover"
               />
 
               <div className="p-4">
-                <h3 className="font-semibold text-sm text-gray-800 truncate">
+                <h3 className="font-semibold text-sm text-[#0F4C5C] truncate">
                   {book.title}
                 </h3>
                 <p className="text-xs text-gray-500 truncate mt-1">
@@ -82,7 +85,7 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-gray-900 text-gray-400 text-center py-6 text-sm">
+      <footer className="bg-[#0F4C5C] text-[#CFE6E5] text-center py-6 text-sm">
         © 2026 Bibliothèque Numérique — Tous droits réservés
       </footer>
     </div>

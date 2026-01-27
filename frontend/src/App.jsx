@@ -4,11 +4,17 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
+// USER
 import UserDashboard from "./pages/UserDashboard";
+import UserCatalog from "./pages/UserCatalogue";
+
+// ADMIN
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCategories from "./pages/AdminCategories";
 import AdminBooks from "./pages/AdminBooks";
 import AdminUsers from "./pages/AdminUsers";
+
 import Catalog from "./pages/Catalog";
 import BookDetails from "./pages/BookDetails";
 
@@ -20,16 +26,16 @@ export default function App() {
       <Navbar />
 
       <Routes>
-        {/* Public */}
+        {/* PUBLIC */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/books/:id" element={<BookDetails />} />
 
-        {/* User */}
+        {/* USER */}
         <Route
-          path="/dashboard/user"
+          path="/UserDashboard"
           element={
             <ProtectedRoute role="user">
               <UserDashboard />
@@ -37,9 +43,18 @@ export default function App() {
           }
         />
 
-        {/* Admin */}
         <Route
-          path="/dashboard/admin"
+          path="/UserCatalog"
+          element={
+            <ProtectedRoute role="user">
+              <UserCatalog />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ADMIN */}
+        <Route
+          path="/AdminDashboard"
           element={
             <ProtectedRoute role="admin">
               <AdminDashboard />
@@ -48,7 +63,7 @@ export default function App() {
         />
 
         <Route
-          path="/dashboard/admin/categories"
+          path="/AdminCategories"
           element={
             <ProtectedRoute role="admin">
               <AdminCategories />
@@ -57,7 +72,7 @@ export default function App() {
         />
 
         <Route
-          path="/dashboard/admin/books"
+          path="/AdminBooks"
           element={
             <ProtectedRoute role="admin">
               <AdminBooks />
@@ -66,7 +81,7 @@ export default function App() {
         />
 
         <Route
-          path="/dashboard/admin/users"
+          path="/AdminUsers"
           element={
             <ProtectedRoute role="admin">
               <AdminUsers />
