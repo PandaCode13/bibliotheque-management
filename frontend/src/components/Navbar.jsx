@@ -60,13 +60,13 @@ export default function Navbar() {
               <Link to="/AdminDashboard" className="nav-link">
                 Dashboard
               </Link>
-              <Link to="/AdminUsers" className="nav-link">
+              <Link to="/AdminGestionUtilisateurs" className="nav-link">
                 Utilisateurs
               </Link>
               <Link to="/AdminBooks" className="nav-link">
                 Livres
               </Link>
-              <Link to="/AdminCategories" className="nav-link">
+              <Link to="/AdminGestionCategories" className="nav-link">
                 Catégories
               </Link>
               <button onClick={logout} className="btn-primary">

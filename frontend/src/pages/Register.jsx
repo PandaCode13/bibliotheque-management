@@ -3,13 +3,16 @@ import { register } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await register({ email, password });
+    await register({ firstName, lastName, email, password });
     navigate("/login");
   };
 
@@ -24,6 +27,26 @@ export default function Register() {
         </h2>
 
         <div className="space-y-4">
+          <input
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            type="text"
+            placeholder="Prénom"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                       focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+            required
+          />
+
+          <input
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            type="text"
+            placeholder="Nom de famille"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg 
+                       focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+            required
+          />
+
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}

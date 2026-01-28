@@ -4,20 +4,19 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Catalog from "./pages/Catalog";
+import BookDetails from "./pages/BookDetails";
 
 // USER
 import UserDashboard from "./pages/UserDashboard";
-import UserCatalog from "./pages/UserCatalogue";
+import UserCatalogue from "./pages/UserCatalogue";
 import UserFavorites from "./pages/UserFavorites";
 
 // ADMIN
 import AdminDashboard from "./pages/AdminDashboard";
-import AdminCategories from "./pages/AdminCategories";
+import AdminGestionCategories from "./pages/AdminGestionCategories";
 import AdminBooks from "./pages/AdminBooks";
-import AdminUsers from "./pages/AdminUsers";
-
-import Catalog from "./pages/Catalog";
-import BookDetails from "./pages/BookDetails";
+import AdminGestionUtilisateurs from "./pages/AdminGestionUtilisateurs";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -36,7 +35,7 @@ export default function App() {
 
         {/* USER */}
         <Route
-          path="/UserDashboard"
+          path="/dashboard/user"
           element={
             <ProtectedRoute role="user">
               <UserDashboard />
@@ -45,19 +44,26 @@ export default function App() {
         />
 
         <Route
-          path="/UserCatalog"
+          path="/dashboard/user/catalog"
           element={
             <ProtectedRoute role="user">
-              <UserCatalog />
+              <UserCatalogue />
             </ProtectedRoute>
           }
         />
-        
-        <Route path="/favorites" element={ <ProtectedRoute role="user"> <UserFavorites /> </ProtectedRoute> } />
+
+        <Route
+          path="/dashboard/user/favorites"
+          element={
+            <ProtectedRoute role="user">
+              <UserFavorites />
+            </ProtectedRoute>
+          }
+        />
 
         {/* ADMIN */}
         <Route
-          path="/AdminDashboard"
+          path="/dashboard/admin"
           element={
             <ProtectedRoute role="admin">
               <AdminDashboard />
@@ -66,16 +72,16 @@ export default function App() {
         />
 
         <Route
-          path="/AdminCategories"
+          path="/dashboard/admin/categories"
           element={
             <ProtectedRoute role="admin">
-              <AdminCategories />
+              <AdminGestionCategories />
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/AdminBooks"
+          path="/dashboard/admin/books"
           element={
             <ProtectedRoute role="admin">
               <AdminBooks />
@@ -84,13 +90,16 @@ export default function App() {
         />
 
         <Route
-          path="/AdminUsers"
+          path="/dashboard/admin/users"
           element={
             <ProtectedRoute role="admin">
-              <AdminUsers />
+              <AdminGestionUtilisateurs />
             </ProtectedRoute>
           }
         />
+
+        {/* FALLBACK */}
+        <Route path="/" element={<Home />} />
       </Routes>
     </>
   );

@@ -13,65 +13,14 @@ export default function UserDashboard() {
       <div className="max-w-7xl mx-auto space-y-14">
 
         {/* HEADER */}
-        {/* FAVORIS */}
-<section className="space-y-4">
-  <div className="flex justify-between items-center">
-    <h2 className="text-xl font-semibold text-[#0F4C5C]">
-      ⭐ Mes livres favoris
-    </h2>
-
-    <Link
-      to="/favorites"
-      className="text-sm font-medium text-[#0F4C5C] hover:text-[#6FAFB0] transition"
-    >
-      Voir tous mes favoris →
-    </Link>
-  </div>
-
-  {favoriteBooks.length === 0 ? (
-    <div className="bg-white rounded-2xl p-8 text-center text-gray-500 shadow-sm space-y-3">
-      <p>Vous n’avez pas encore ajouté de livres en favoris.</p>
-
-      <Link
-        to="/catalog"
-        className="inline-block text-sm font-semibold 
-                   text-[#0F4C5C] hover:text-[#6FAFB0] transition"
-      >
-        Explorer le catalogue →
-      </Link>
-    </div>
-  ) : (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-      {favoriteBooks.map((book) => (
-        <div
-          key={book._id}
-          className="bg-white rounded-2xl shadow-sm 
-                     hover:shadow-lg hover:-translate-y-1 
-                     transition overflow-hidden"
-        >
-          <img
-            src={
-              book.coverImage && book.coverImage.trim() !== ""
-                ? book.coverImage
-                : "/placeholder-book.png"
-            }
-            alt={book.title}
-            className="h-48 w-full object-cover bg-gray-100"
-          />
-
-          <div className="p-4">
-            <h3 className="font-semibold text-sm text-[#0F4C5C] truncate">
-              {book.title}
-            </h3>
-            <p className="text-xs text-gray-500 truncate mt-1">
-              {book.authors?.join(", ") || "Auteur inconnu"}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</section>
+        <section>
+          <h1 className="text-3xl font-bold text-[#0F4C5C]">
+            Mon espace
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Retrouvez vos livres, vos favoris et vos centres d’intérêt
+          </p>
+        </section>
 
         {/* FAVORIS */}
         <section className="space-y-4">
