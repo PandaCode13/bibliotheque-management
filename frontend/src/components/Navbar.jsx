@@ -7,7 +7,7 @@ export default function Navbar() {
 
   const logout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -36,16 +36,16 @@ export default function Navbar() {
           {/* USER */}
           {token && role === "user" && (
             <>
-              <Link to="/UserDashboard" className="nav-link">
+              <Link to="/dashboard/user" className="nav-link">
                 Dashboard
               </Link>
-              <Link to="/UserCatalog" className="nav-link">
+              <Link to="/dashboard/user/catalog" className="nav-link">
                 Catalogue
               </Link>
-              <Link to="/favorites" className="nav-link">
+              <Link to="dashboard/user/favorites" className="nav-link">
                 Favoris
               </Link>
-              <Link to="/UserProfile" className="nav-link">
+              <Link to="/dashboard/user/profile" className="nav-link">
                 Profil
               </Link>
               <button onClick={logout} className="btn-primary">
@@ -57,16 +57,16 @@ export default function Navbar() {
           {/* ADMIN */}
           {token && role === "admin" && (
             <>
-              <Link to="/AdminDashboard" className="nav-link">
+              <Link to="/dashboard/admin" className="nav-link">
                 Dashboard
               </Link>
-              <Link to="/AdminGestionUtilisateurs" className="nav-link">
+              <Link to="/dashboard/admin/users" className="nav-link">
                 Utilisateurs
               </Link>
-              <Link to="/AdminBooks" className="nav-link">
+              <Link to="/dashboard/admin/books" className="nav-link">
                 Livres
               </Link>
-              <Link to="/AdminGestionCategories" className="nav-link">
+              <Link to="/dashboard/admin/categories" className="nav-link">
                 Catégories
               </Link>
               <button onClick={logout} className="btn-primary">

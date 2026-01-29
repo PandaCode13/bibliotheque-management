@@ -122,22 +122,11 @@ export default function BookDetails() {
 
           {/* DESCRIPTION */}
           <p className="text-gray-700">{book.description}</p>
+        </div>
 
-          {/* COMMENTS */}
+        {/* COMMENTS */}
           <div className="pt-6">
             <h3 className="text-lg font-semibold mb-3">Commentaires</h3>
-
-            <div className="space-y-3 mb-4">
-              {comments.map((c) => (
-                <div
-                  key={c._id}
-                  className="bg-[#FAFAF9] border border-[#DDE5E4] rounded-lg p-3 text-sm"
-                >
-                  <strong>{c.user?.firstName || "Utilisateur"} :</strong>{" "}
-                  {c.text}
-                </div>
-              ))}
-            </div>
 
             <div className="flex gap-2">
               <input
@@ -152,11 +141,18 @@ export default function BookDetails() {
               >
                 Publier
               </button>
+
+              <div className="space-y-3 mb-4">
+              {comments.map((c) => (
+                  <div key={c._id} className="bg-[#FAFAF9] border border-[#DDE5E4] rounded-lg p-3 text-sm">
+                    <strong>{c.user?.firstName || "Utilisateur"} :</strong>{" "}
+                    {c.text}
+                  </div>
+                ))}
+              </div>
             </div>
 
           </div>
-
-        </div>
       </div>
     </div>
   );
