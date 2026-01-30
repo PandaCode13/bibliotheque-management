@@ -1,25 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getFavorites, toggleFavorite } from "../services/userService";
 
 export default function UserFavorites() {
-  // 🔧 MOCK (sera remplacé par API)
-  const [favorites, setFavorites] = useState([
-    {
-      _id: "1",
-      title: "Eloquent JavaScript",
-      authors: ["Marijn Haverbeke"],
-      coverImage: "https://eloquentjavascript.net/img/cover.jpg",
-    },
-    {
-      _id: "2",
-      title: "Sherlock Holmes Vol.1",
-      authors: ["Arthur Conan Doyle"],
-      coverImage: "",
-    },
-  ]);
+  const [favorites, setFavorites] = useState([]);
 
-  const removeFavorite = (id) => {
-    setFavorites(favorites.filter((b) => b._id !== id));
+  useEffect(() => {
+    getFavorites().then((res) => setFavorites(res.data));
+  }, []);
+
+  const removeFavorite = async (id) => {
+    await toggleFavorite(id);
+    setFavorites((prev) => prev.filter((b) => b._id !== id));
   };
 
   return (
@@ -65,7 +57,7 @@ export default function UserFavorites() {
                   src={
                     book.coverImage && book.coverImage.trim() !== ""
                       ? book.coverImage
-                      : "/placeholder-book.png"
+                      : "https://via.placeholder.com/300x400?text=Livre"
                   }
                   alt={book.title}
                   className="h-60 w-full object-cover bg-gray-100"

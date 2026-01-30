@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getPublicBooks } from "../services/bookService";
 import { Link } from "react-router-dom";
-  import { getPublicCategories } from "../services/categoryService";
+import { getPublicCategories } from "../services/categoryService";
 
 export default function Catalog() {
   const [books, setBooks] = useState([]);
@@ -23,9 +23,23 @@ const load = async () => {
   setBooks(res.data);
 };
 
+// un useEffect pour les catégories
+useEffect(() => {
+  getPublicCategories()
+    .then((res) => {
+      setCategories(res.data);
+    })
+    .catch((err) => {
+      console.error("Erreur chargement catégories", err);
+    });
+}, []);
+
+
+// un useEffect pour afficher les livres
 useEffect(() => {
   load();
-}, [filters]);
+}, []);
+
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">
@@ -72,16 +86,24 @@ useEffect(() => {
               ))}
             </select>
 
-            <input
-              type="text"
-              placeholder="Langue"
-              value={filters.language}
-              onChange={(e) =>
-                setFilters({ ...filters, language: e.target.value })
-              }
-              className="h-[52px] px-4 border border-gray-300 rounded-lg 
-                         focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
-            />
+            <select
+                value={filters.language}
+                onChange={(e) =>
+                  setFilters({ ...filters, language: e.target.value })
+                }
+              className="h-[52px] px-4 border border-gray-300 rounded-lg bg-white
+                        focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+            >
+              <option value="">Toutes les langues</option>
+              <option value="français">Français</option>
+              <option value="anglais">Anglais</option>
+              <option value="arabe">Arabe</option>
+              <option value="allemand">Allemand</option>
+              <option value="espagnol">Espagnol</option>
+              <option value="afar">Afar</option>
+              <option value="somali">Somali</option>
+            </select>
+
 
             <button
               onClick={load}

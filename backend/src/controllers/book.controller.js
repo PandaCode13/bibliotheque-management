@@ -37,20 +37,16 @@ exports.deleteBook = async (req, res) => {
 exports.getPublicBooks = async (req, res) => {
   try {
     const { q, category, language } = req.query;
-    const isAdmin = req.user?.role === "admin";
-    const isUser = req.user?.role === "user";
-
     const filter = {};
 
-    // 🔍 Recherche texte (titre / auteur / ISBN)
-if (q && q.trim() !== "") {
-  filter.$or = [
-    { title: { $regex: q, $options: "i" } },
-    { authors: { $regex: q, $options: "i" } },
-    { isbn: { $regex: q, $options: "i" } },
-  ];
-}
-
+    // 🔍 Recherche texte
+    if (q && q.trim() !== "") {
+      filter.$or = [
+        { title: { $regex: q, $options: "i" } },
+        { authors: { $regex: q, $options: "i" } },
+        { isbn: { $regex: q, $options: "i" } },
+      ];
+    }
 
     // 🏷️ Catégorie
     if (category) {
@@ -58,42 +54,17 @@ if (q && q.trim() !== "") {
     }
 
     // 🌍 Langue
-if (language && language.trim() !== "") {
-  filter.language = { $regex: language, $options: "i" };
-}
-
-    let books;
-
-    if (isAdmin || isUser) {
-      // ADMIN → TOUS LES LIVRES AVEC FILTRES
-      books = await Book.find(filter)
-        .populate("category")
-        .sort({ createdAt: -1 });
-    } else {
-      // USER / PUBLIC → FILTRÉS + RANDOM
-      books = await Book.aggregate([
-        { $match: filter },
-        { $sample: { size: 12 } },
-        {
-          $lookup: {
-            from: "categories",
-            localField: "category",
-            foreignField: "_id",
-            as: "category",
-          },
-        },
-        {
-          $unwind: {
-            path: "$category",
-            preserveNullAndEmptyArrays: true,
-          },
-        },
-      ]);
+    if (language && language.trim() !== "") {
+      filter.language = { $regex: language, $options: "i" };
     }
+
+    const books = await Book.find(filter)
+      .populate("category", "name")
+      .sort({ createdAt: -1 });
 
     res.json(books);
   } catch (error) {
-    console.error("CATALOG FILTER ERROR:", error);
+    console.error("PUBLIC BOOK ERROR:", error);
     res.status(500).json({ message: "Erreur serveur catalogue" });
   }
 };

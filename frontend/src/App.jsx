@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
+import "./App.css";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -11,6 +13,7 @@ import BookDetails from "./pages/BookDetails";
 import UserDashboard from "./pages/UserDashboard";
 import UserCatalogue from "./pages/UserCatalogue";
 import UserFavorites from "./pages/UserFavorites";
+import UserProfiles from "./pages/UserProfiles";
 
 // ADMIN
 import AdminDashboard from "./pages/AdminDashboard";
@@ -30,7 +33,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/catalog" element={<Catalog/>}/>
         <Route path="/books/:id" element={<BookDetails />} />
 
         {/* USER */}
@@ -59,6 +62,15 @@ export default function App() {
               <UserFavorites />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+          path="/dashboard/user/profiles"
+          element = {
+            <ProtectedRoute role="user">
+                <UserProfiles />
+            </ProtectedRoute>
+          } 
         />
 
         {/* ADMIN */}
@@ -97,9 +109,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* FALLBACK */}
-        <Route path="/" element={<Home />} />
       </Routes>
     </>
   );

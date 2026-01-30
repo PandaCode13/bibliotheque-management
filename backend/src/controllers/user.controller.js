@@ -34,14 +34,27 @@ exports.toggleFavorite = async (req, res) => {
   const user = await User.findById(req.user.id);
   const bookId = req.params.id;
 
-  const index = user.favoriteBooks.indexOf(bookId);
+  const index = user.favoriteBooks.findIndex(
+    (b) => b.toString() === bookId
+  );
+
+  let isFavorite;
 
   if (index === -1) {
     user.favoriteBooks.push(bookId);
+    isFavorite = true;
   } else {
     user.favoriteBooks.splice(index, 1);
+    isFavorite = false;
   }
 
   await user.save();
+  res.json({ isFavorite });
+};
+
+exports.getFavorites = async (req, res) => {
+  const user = await User.findById(req.user.id)
+    .populate("favoriteBooks");
+
   res.json(user.favoriteBooks);
 };

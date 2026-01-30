@@ -28,6 +28,7 @@ export default function Navbar() {
           {!token && (
             <>
               <Link to="/" className="nav-link">Accueil</Link>
+              <Link to="catalog" className="nav-link"> Catalogue</Link>
               <Link to="/login" className="nav-link">Connexion</Link>
               <Link to="/register" className="px-4 py-2 rounded-full border border-[#9DBEBB] text-[#0F4C5C]"> Inscription </Link>
             </>
@@ -42,10 +43,10 @@ export default function Navbar() {
               <Link to="/dashboard/user/catalog" className="nav-link">
                 Catalogue
               </Link>
-              <Link to="dashboard/user/favorites" className="nav-link">
+              <Link to="/dashboard/user/favorites" className="nav-link">
                 Favoris
               </Link>
-              <Link to="/dashboard/user/profile" className="nav-link">
+              <Link to="/dashboard/user/profiles" className="nav-link">
                 Profil
               </Link>
               <button onClick={logout} className="btn-primary">

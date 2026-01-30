@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.nav-link {
+    transition: all 0.5ms ease-in;
+}
+
+.nav-link:hover {
+    color: red;
+    text-decoration: underline;
+    text-decoration-line: 2px;
+    text-decoration-color: aqua;
+}

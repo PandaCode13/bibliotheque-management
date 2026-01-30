@@ -1,12 +1,25 @@
 // frontend/src/pages/UserDashboard.jsx
 
 import { Link } from "react-router-dom";
+import { useState, useEffect} from "react";
+import { getFavorites, toggleFavorite } from "../services/userService";
 
 export default function UserDashboard() {
-  // Données MOCK (frontend uniquement)
-  const favoriteBooks = [];
-  const readBooks = [];
-  const searchedCategories = ["Philosophie", "Manga", "Roman policier"];
+  const [favorites, setFavorites] = useState([]);
+
+  useEffect(() => {
+    getFavorites()
+      .then((res) => setFavorites(res.data))
+      .catch(() => setFavorites([]));
+  }, []);
+
+  const removeFavorite = (bookId) => {
+    toggleFavorite(bookId).then(() => {
+      setFavorites((prev) =>
+        prev.filter((b) => b._id !== bookId)
+      );
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#FAFAF9] px-6 py-8">
@@ -36,15 +49,72 @@ export default function UserDashboard() {
             </Link>
           </div>
 
-          {favoriteBooks.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 text-gray-500 text-center shadow-sm">
-              Vous n’avez pas encore ajouté de livres en favoris.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {/* Cartes livres favoris */}
-            </div>
-          )}
+          <div className="div-favoris">
+            {/* EMPTY STATE */}
+                    {favorites.length === 0 && (
+                      <div className="bg-white rounded-2xl shadow-sm p-10 text-center text-gray-500">
+                        Vous n’avez encore ajouté aucun livre en favoris.
+                        <div className="mt-4">
+                          <Link
+                            to="/catalog"
+                            className="text-[#0F4C5C] font-semibold hover:underline"
+                          >
+                            Explorer le catalogue →
+                          </Link>
+                        </div>
+                      </div>
+                    )}
+
+            {favorites.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        {favorites.map((book) => (
+                          <div
+                            key={book._id}
+                            className="bg-white rounded-2xl shadow-sm 
+                                       hover:shadow-lg hover:-translate-y-1 
+                                       transition overflow-hidden"
+                          >
+                            <img
+                              src={
+                                book.coverImage && book.coverImage.trim() !== ""
+                                  ? book.coverImage
+                                  : "https://via.placeholder.com/300x400?text=Livre"
+                              }
+                              alt={book.title}
+                              className="h-60 w-full object-cover bg-gray-100"
+                            />
+            
+                            <div className="p-4 space-y-2">
+                              <h3 className="font-semibold text-[#0F4C5C] truncate">
+                                {book.title}
+                              </h3>
+            
+                              <p className="text-sm text-gray-500 truncate">
+                                {book.authors?.join(", ") || "Auteur inconnu"}
+                              </p>
+            
+                              <div className="flex justify-between items-center pt-2">
+                                <Link
+                                  to={`/books/${book._id}`}
+                                  className="text-sm font-medium 
+                                             text-[#0F4C5C] hover:text-[#6FAFB0]"
+                                >
+                                  Voir détails →
+                                </Link>
+            
+                                <button
+                                  onClick={() => removeFavorite(book._id)}
+                                  className="text-sm text-red-500 hover:underline"
+                                >
+                                  Retirer
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+          </div>
         </section>
 
         {/* LIVRES CONSULTÉS */}
@@ -52,16 +122,6 @@ export default function UserDashboard() {
           <h2 className="text-xl font-semibold text-[#0F4C5C]">
             👀 Livres consultés
           </h2>
-
-          {readBooks.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 text-gray-500 text-center shadow-sm">
-              Vous n’avez pas encore consulté de livres.
-            </div>
-          ) : (
-            <ul className="space-y-4">
-              {/* Liste livres consultés */}
-            </ul>
-          )}
         </section>
 
         {/* CATÉGORIES RECHERCHÉES */}
@@ -69,26 +129,6 @@ export default function UserDashboard() {
           <h2 className="text-xl font-semibold text-[#0F4C5C]">
             🏷️ Catégories recherchées
           </h2>
-
-          {searchedCategories.length === 0 ? (
-            <div className="bg-white rounded-2xl p-6 text-gray-500 text-center shadow-sm">
-              Aucune catégorie recherchée pour le moment.
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-3">
-              {searchedCategories.map((cat, index) => (
-                <Link
-                  key={index}
-                  to={`/catalog?category=${cat}`}
-                  className="px-5 py-2 bg-[#E6F1F0] text-[#0F4C5C] 
-                             rounded-full text-sm font-medium 
-                             hover:bg-[#9DBEBB] hover:text-[#0F4C5C] transition"
-                >
-                  {cat}
-                </Link>
-              ))}
-            </div>
-          )}
         </section>
 
       </div>

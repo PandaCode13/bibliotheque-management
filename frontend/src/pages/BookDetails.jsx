@@ -2,21 +2,23 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   getPublicBookById,
-  likeBook,
-  dislikeBook,
   getCommentsByBook,
-  addComment,
 } from "../services/bookService";
-import { toggleFavorite } from "../services/userService";
+import { toggleFavorite, getFavorites } from "../services/userService";
+import { likeBook, dislikeBook, addComment } from "../services/bookService";
 
 export default function BookDetails() {
   const { id } = useParams();
 
   const [book, setBook] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // ✅ AUTH CHECK
+  const isAuthenticated = !!localStorage.getItem("token");
+  const userRole = localStorage.getItem("role"); // "user" | "admin"
 
   useEffect(() => {
     Promise.all([
@@ -30,12 +32,28 @@ export default function BookDetails() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading)
+  // ⭐ Favori (UNIQUEMENT USER CONNECTÉ)
+  useEffect(() => {
+    if (isAuthenticated && userRole === "user") {
+      getFavorites().then((res) => {
+        setIsFavorite(res.data.some((b) => b._id === id));
+      });
+    }
+  }, [id, isAuthenticated, userRole]);
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Chargement...
       </div>
     );
+  }
+
+  /* ================== ACTIONS USER ================== */
+  const handleFavorite = async () => {
+    const res = await toggleFavorite(id);
+    setIsFavorite(res.data.isFavorite);
+  };
 
   const handleLike = async () => {
     const res = await likeBook(id);
@@ -53,11 +71,6 @@ export default function BookDetails() {
       likesCount: res.data.likes,
       dislikesCount: res.data.dislikes,
     });
-  };
-
-  const handleFavorite = async () => {
-    const res = await toggleFavorite(id);
-    setIsFavorite(res.data.includes(id));
   };
 
   const handleAddComment = async () => {
@@ -84,51 +97,59 @@ export default function BookDetails() {
 
         {/* CONTENT */}
         <div className="md:col-span-2 space-y-4 text-[#0F4C5C]">
-
           <h2 className="text-3xl font-bold">{book.title}</h2>
           <p className="text-gray-600">
             {book.authors?.join(", ") || "Auteur inconnu"}
           </p>
 
-          {/* ACTIONS */}
-          <div className="flex gap-4 pt-2">
+          {/* ================= ACTIONS USER ONLY ================= */}
+          {isAuthenticated && userRole === "user" && (
+            <div className="flex gap-4 pt-2">
+              <button
+                onClick={handleFavorite}
+                className={`px-5 py-2 rounded-full font-semibold transition
+                  ${isFavorite
+                    ? "bg-[#9DBEBB]"
+                    : "border border-[#9DBEBB] hover:bg-[#9DBEBB]"
+                  }`}
+              >
+                ⭐ Favori
+              </button>
 
-            <button
-              onClick={handleFavorite}
-              className={`px-5 py-2 rounded-full font-semibold transition
-                ${isFavorite
-                  ? "bg-[#9DBEBB]"
-                  : "border border-[#9DBEBB] hover:bg-[#9DBEBB]"
-                }`}
-            >
-              ⭐ Favori
-            </button>
+              <button
+                onClick={handleLike}
+                className="px-4 py-2 rounded-full bg-[#E6F1F0]"
+              >
+                👍 {book.likesCount}
+              </button>
 
-            <button
-              onClick={handleLike}
-              className="px-4 py-2 rounded-full bg-[#E6F1F0]"
-            >
-              👍 {book.likesCount}
-            </button>
+              <button
+                onClick={handleDislike}
+                className="px-4 py-2 rounded-full bg-[#F1E6E6]"
+              >
+                👎 {book.dislikesCount}
+              </button>
+            </div>
+          )}
 
-            <button
-              onClick={handleDislike}
-              className="px-4 py-2 rounded-full bg-[#F1E6E6]"
-            >
-              👎 {book.dislikesCount}
-            </button>
+          {/* MESSAGE PUBLIC */}
+          {!isAuthenticated && (
+            <p className="text-sm text-gray-500 italic">
+              Connectez-vous pour aimer, commenter ou ajouter ce livre à vos favoris.
+            </p>
+          )}
 
-          </div>
-
-          {/* DESCRIPTION */}
           <p className="text-gray-700">{book.description}</p>
         </div>
 
-        {/* COMMENTS */}
-          <div className="pt-6">
-            <h3 className="text-lg font-semibold mb-3">Commentaires</h3>
+        {/* ================= COMMENTS ================= */}
+        <div className="md:col-span-3 pt-6">
 
-            <div className="flex gap-2">
+          {/* AJOUT COMMENTAIRE (USER ONLY) */}
+          {isAuthenticated && userRole === "user" && (
+            
+
+            <div className="flex gap-2 mb-4">
               <input
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -141,18 +162,23 @@ export default function BookDetails() {
               >
                 Publier
               </button>
-
-              <div className="space-y-3 mb-4">
-              {comments.map((c) => (
-                  <div key={c._id} className="bg-[#FAFAF9] border border-[#DDE5E4] rounded-lg p-3 text-sm">
-                    <strong>{c.user?.firstName || "Utilisateur"} :</strong>{" "}
-                    {c.text}
-                  </div>
-                ))}
-              </div>
             </div>
+          )}
 
+          {/* LISTE DES COMMENTAIRES (VISIBLE PUBLIC) */}
+          <div className="space-y-3">
+            {comments.map((c) => (
+              <div
+                key={c._id}
+                className="bg-[#FAFAF9] border border-[#DDE5E4] rounded-lg p-3 text-sm"
+              >
+                <strong>{c.user?.firstName || "Utilisateur"} :</strong>{" "}
+                {c.text}
+              </div>
+            ))}
           </div>
+        </div>
+
       </div>
     </div>
   );
