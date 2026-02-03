@@ -3,6 +3,8 @@ const router = express.Router();
 const controller = require("../controllers/user.controller");
 const auth = require("../middlewares/auth.middleware");
 const isAdmin = require("../middlewares/admin.middleware");
+const User = require("../models/user.model");
+const Book = require("../models/book.model");
 
 /* ROUTES ADMIN */
 router.get("/", auth, isAdmin, controller.getAllUsers);
@@ -20,13 +22,19 @@ router.get("/me", auth, (req, res) => {
 });
 
 router.put("/me", auth, async (req, res) => {
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user.id,
-    req.body,
-    { new: true }
-  ).select("-password");
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      req.body,
+      { new: true }
+    ).select("-password");
 
-  res.json(updatedUser);
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur" });
+  }
 });
+
+// Stats moved to dedicated route: /api/stats (see src/routes/stats.js)
 
 module.exports = router;

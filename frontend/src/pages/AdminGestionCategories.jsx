@@ -112,7 +112,7 @@ export default function AdminGestionCategories() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 m-5">
 
       {/* ======================
             AJOUT CATÉGORIE

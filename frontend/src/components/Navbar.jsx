@@ -15,12 +15,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
 
         {/* LOGO */}
-        <Link
-          to="/"
-          className="text-xl font-bold tracking-wide text-[#0F4C5C]"
-        >
-          Biblio
-        </Link>
+        <div className="flex gap-1 items-center">
+          <img src="/favicon.png" alt="Library Digital logo" className="w-10 h-10 object-contain" />
+          <Link
+            to="/"
+            className="text-xl font-bold tracking-wide text-[#0F4C5C]">
+              Digital Library
+          </Link>
+        </div>
 
         <div className="flex items-center gap-6 text-sm font-medium">
 

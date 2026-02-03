@@ -74,7 +74,7 @@ export default function AdminGestionUtilisateurs() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 m-5">
 
       {/* HEADER */}
       <div>

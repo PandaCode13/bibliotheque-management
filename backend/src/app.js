@@ -24,4 +24,7 @@ app.get("/api/health", (_, res) => {
   res.json({ status: "OK" });
 });
 
+const statsRoutes = require("./routes/stats");
+app.use("/api", statsRoutes);
+
 module.exports = app;
