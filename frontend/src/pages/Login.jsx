@@ -60,6 +60,9 @@ export default function Login() {
         >
           Se connecter
         </button>
+        <p className="text-sm text-center text-gray-500">
+          <Link to="/forgot-password" className="text-[#0F4C5C] hover:underline" > Mot de passe oublié ? </Link>
+        </p>
 
         <p className="text-sm text-center text-gray-600">
           Vous n’avez pas encore de compte ?{" "}

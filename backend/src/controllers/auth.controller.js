@@ -51,3 +51,64 @@ exports.login = async (req, res) => {
     },
   });
 };
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ message: "Utilisateur introuvable" });
+  }
+
+  // Générer token
+  const token = crypto.randomBytes(32).toString("hex");
+
+  // Stocker version hashée
+  user.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
+
+  await user.save();
+
+  // ⚠️ MODE DEV : on retourne le lien au lieu d’envoyer un email
+  const resetLink = `http://localhost:5173/reset-password/${token}`;
+
+  res.json({
+    message: "Lien de réinitialisation généré",
+    resetLink,
+  });
+};
+
+/* =====================================================
+   RÉINITIALISATION
+===================================================== */
+exports.resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      message: "Token invalide ou expiré",
+    });
+  }
+
+  user.password = await bcrypt.hash(password, 10);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+
+  res.json({ message: "Mot de passe réinitialisé avec succès" });
+};

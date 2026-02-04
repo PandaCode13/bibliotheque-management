@@ -21,6 +21,9 @@ import AdminGestionCategories from "./pages/AdminGestionCategories";
 import AdminBooks from "./pages/AdminBooks";
 import AdminGestionUtilisateurs from "./pages/AdminGestionUtilisateurs";
 
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
@@ -30,9 +33,11 @@ export default function App() {
 
       <Routes>
         {/* PUBLIC */}
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/catalog" element={<Catalog/>}/>
         <Route path="/books/:id" element={<BookDetails />} />
 

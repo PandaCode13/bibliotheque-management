@@ -4,13 +4,13 @@ const controller = require("../controllers/user.controller");
 const auth = require("../middlewares/auth.middleware");
 const isAdmin = require("../middlewares/admin.middleware");
 const User = require("../models/user.model");
-const Book = require("../models/book.model");
 
 /* ROUTES ADMIN */
 router.get("/", auth, isAdmin, controller.getAllUsers);
 router.put("/:id/role", auth, isAdmin, controller.updateUserRole);
 router.patch("/:id/status", auth, isAdmin, controller.toggleUserStatus);
 router.delete("/:id", auth, isAdmin, controller.deleteUser);
+router.get("/", auth, isAdmin, controller.getAllLastestUsers);
 
 // FAVORIS USER
 router.get("/favorites", auth, controller.getFavorites);
@@ -34,7 +34,5 @@ router.put("/me", auth, async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 });
-
-// Stats moved to dedicated route: /api/stats (see src/routes/stats.js)
 
 module.exports = router;

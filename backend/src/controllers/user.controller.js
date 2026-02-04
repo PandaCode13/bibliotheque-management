@@ -5,6 +5,13 @@ exports.getAllUsers = async (_, res) => {
   res.json(users);
 };
 
+exports.getAllLastestUsers = async (_, res) => {
+
+  sqlrequest = "SELECT` \* FROM users ORDER BY created_at DESC LIMIT 10;"
+
+  const latestUsers = await User.find().select("")
+}
+
 exports.updateUserRole = async (req, res) => {
   const { role } = req.body;
 
