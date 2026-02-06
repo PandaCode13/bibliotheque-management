@@ -29,7 +29,7 @@ export default function Navbar() {
           {/* PUBLIC */}
           {!token && (
             <>
-              <Link to="/" className="nav-link">Accueil</Link>
+              <Link to="/home" className="nav-link">Accueil</Link>
               <Link to="catalog" className="nav-link"> Catalogue</Link>
               <Link to="/login" className="nav-link">Connexion</Link>
               <Link to="/register" className="px-4 py-2 rounded-full border border-[#9DBEBB] text-[#0F4C5C]"> Inscription </Link>
