@@ -13,7 +13,7 @@ Il est développé avec **Node.js** et fournit les services nécessaires au fron
 * **Node.js**
 * **Express.js**
 * **Nodemon** (en développement)
-* **Base de données** : MySQL / MongoDB *(selon configuration)*
+* **Base de données** : MongoDB *(selon configuration)*
 * **JWT** (authentification)
 * **bcrypt** (hachage des mots de passe)
 
@@ -53,21 +53,6 @@ cd bibliotheque-management/backend
 npm install
 ```
 
-### 3️⃣ Variables d’environnement
-
-Créer un fichier `.env` à la racine du dossier `backend` :
-
-```env
-PORT=3000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWORD=****
-DB_NAME=bibliotheque
-JWT_SECRET=secret_key
-```
-
-⚠️ Ne jamais versionner le fichier `.env`.
-
 ---
 
 ## ▶️ Lancement du serveur
@@ -86,28 +71,6 @@ http://localhost:3000
 
 ---
 
-## 🔐 Sécurité
-
-* Mots de passe hachés avec **bcrypt**
-* Authentification via **JWT**
-* Protection des routes sensibles par middleware
-* Validation des entrées utilisateur
-* Audit des dépendances avec `npm audit`
-
----
-
-## 🔗 Exemples de routes API
-
-| Méthode | Route                | Description           |
-| ------- | -------------------- | --------------------- |
-| POST    | `/api/auth/login`    | Connexion utilisateur |
-| POST    | `/api/auth/register` | Inscription           |
-| GET     | `/api/books`         | Liste des livres      |
-| POST    | `/api/books`         | Ajouter un livre      |
-| DELETE  | `/api/books/:id`     | Supprimer un livre    |
-
----
-
 ## 🧪 Tests
 
 ```bash
@@ -119,16 +82,6 @@ Résultat attendu :
 ```
 0 vulnerabilities found
 ```
-
----
-
-## 🚀 Améliorations possibles
-
-* Tests unitaires (Jest)
-* Documentation Swagger / OpenAPI
-* Rate limiting
-* Logs sécurisés
-* Conteneurisation Docker
 
 ---
 
