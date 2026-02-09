@@ -77,7 +77,6 @@ export default function Navbar() {
               </button>
             </>
           )}
-
         </div>
       </div>
     </nav>

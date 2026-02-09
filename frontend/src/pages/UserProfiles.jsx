@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import {getMe, updateMe} from "../services/userService";
 
 export default function UserProfiles() {
   const [user, setUser] = useState(null);
@@ -7,25 +8,25 @@ export default function UserProfiles() {
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 charger l'utilisateur connecté
   useEffect(() => {
-    api.get("/users/me")
-      .then((res) => {
+    getMe()
+      .then( res => {
         setUser(res.data);
         setFormData(res.data);
       })
       .finally(() => setLoading(false));
-  }, []);
+    }, 
+  []);
+
+  const handleSave = async () => {
+    const res = await updateMe(formData);
+    setUser(res.data);
+    setIsEditing(false);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSave = async () => {
-    const res = await api.put("/users/me", formData);
-    setUser(res.data);
-    setIsEditing(false);
   };
 
   if (loading) {

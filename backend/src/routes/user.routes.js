@@ -4,6 +4,7 @@ const controller = require("../controllers/user.controller");
 const auth = require("../middlewares/auth.middleware");
 const isAdmin = require("../middlewares/admin.middleware");
 const User = require("../models/user.model");
+const DataUser = require("../controllers/user.controller");
 
 /* ROUTES ADMIN */
 router.get("/", auth, isAdmin, controller.getAllUsers);
@@ -11,6 +12,7 @@ router.put("/:id/role", auth, isAdmin, controller.updateUserRole);
 router.patch("/:id/status", auth, isAdmin, controller.toggleUserStatus);
 router.delete("/:id", auth, isAdmin, controller.deleteUser);
 router.get("/", auth, isAdmin, controller.getAllLastestUsers);
+// router.get("/id");
 
 // FAVORIS USER
 router.get("/favorites", auth, controller.getFavorites);

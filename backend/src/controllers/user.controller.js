@@ -9,7 +9,7 @@ exports.getAllLastestUsers = async (_, res) => {
 
   sqlrequest = "SELECT` \* FROM users ORDER BY created_at DESC LIMIT 10;"
 
-  const latestUsers = await User.find().select("")
+  const latestUsers = await User.find().select("");
 }
 
 exports.updateUserRole = async (req, res) => {
@@ -65,3 +65,28 @@ exports.getFavorites = async (req, res) => {
 
   res.json(user.favoriteBooks);
 };
+
+// // controllers/user.controller.js
+// const User = require("../models/user.model");
+
+// exports.getDataUser = () => async (req, res) => {
+//   try {
+//     const data = await User.find()
+//       .select("-password -resetPasswordToken -resetPasswordExpires")
+//       .populate("favoriteBooks", "title author")
+//       .populate("wishlist", "title author")
+//       .populate("votes.book", "title author");
+
+//     res.status(200).json({
+//       success: true,
+//       count: data.length,
+//       data,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Erreur lors de la récupération des utilisateurs",
+//       error: error.message,
+//     });
+//   }
+// };

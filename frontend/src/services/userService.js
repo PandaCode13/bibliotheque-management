@@ -18,5 +18,8 @@ export const getFavorites = () =>
 export const toggleFavorite = (bookId) =>
   api.post(`/users/favorites/${bookId}`);
 
+export const getMe = () => api.get("/users/me");
+export const updateMe = (data) => api.put("/users/me", data);
+
 // Récupère les statistiques globales (users, books)
 export const getStats = () => api.get("/stats");
