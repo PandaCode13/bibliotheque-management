@@ -3,18 +3,22 @@ const router = express.Router();
 
 const User = require("../models/user.model");
 const Book = require("../models/book.model");
+const Category = require("../models/category.model");
+const Favoris = require("../models/book.model")
 
 // GET /api/stats
 router.get("/stats", async (req, res) => {
   try {
     const users = await User.countDocuments();
     const books = await Book.countDocuments();
+    const categories = await Category.countDocuments();
 
-    res.json({ users, books });
+    res.json({ users, books, categories});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Erreur serveur" });
   }
 });
+
 
 module.exports = router;

@@ -3,35 +3,66 @@ const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
 
 exports.createBook = async (req, res) => {
-  const book = await Book.create(req.body);
-  res.status(201).json(book);
+  try {
+    const book = await Book.create(req.body);
+    const populatedBook = await Book.findById(book._id).populate("category");
+    res.status(201).json(populatedBook);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la création du livre", error: error.message });
+  }
 };
 
 exports.getAllBooksAdmin = async (_, res) => {
-  const books = await Book.find()
-    .populate("category")
-    .sort({ createdAt: -1 });
-  res.json(books);
+  try {
+    const books = await Book.find()
+      .populate("category")
+      .sort({ createdAt: -1 });
+    res.json(books);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors du chargement des livres", error: error.message });
+  }
 };
 
 exports.getBookById = async (req, res) => {
-  const book = await Book.findById(req.params.id).populate("category");
-  if (!book) return res.status(404).json({ message: "Livre introuvable" });
-  res.json(book);
+  try {
+    const book = await Book.findById(req.params.id).populate("category");
+    if (!book) return res.status(404).json({ message: "Livre introuvable" });
+    res.json(book);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la récupération du livre", error: error.message });
+  }
 };
 
 exports.updateBook = async (req, res) => {
-  const book = await Book.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true }
-  );
-  res.json(book);
+  try {
+    const book = await Book.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    ).populate("category");
+
+    if (!book) {
+      return res.status(404).json({ message: "Livre introuvable" });
+    }
+
+    res.json(book);
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la modification du livre", error: error.message });
+  }
 };
 
 exports.deleteBook = async (req, res) => {
-  await Book.findByIdAndDelete(req.params.id);
-  res.json({ message: "Livre supprimé" });
+  try {
+    const book = await Book.findByIdAndDelete(req.params.id);
+
+    if (!book) {
+      return res.status(404).json({ message: "Livre introuvable" });
+    }
+
+    res.json({ message: "Livre supprimé avec succès" });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur lors de la suppression du livre", error: error.message });
+  }
 };
 
 exports.getPublicBooks = async (req, res) => {

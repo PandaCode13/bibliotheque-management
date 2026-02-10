@@ -8,11 +8,11 @@ const DataUser = require("../controllers/user.controller");
 
 /* ROUTES ADMIN */
 router.get("/", auth, isAdmin, controller.getAllUsers);
+router.post("/", auth, isAdmin, controller.createUser);
+router.put("/:id", auth, isAdmin, controller.updateUser);
 router.put("/:id/role", auth, isAdmin, controller.updateUserRole);
 router.patch("/:id/status", auth, isAdmin, controller.toggleUserStatus);
 router.delete("/:id", auth, isAdmin, controller.deleteUser);
-router.get("/", auth, isAdmin, controller.getAllLastestUsers);
-// router.get("/id");
 
 // FAVORIS USER
 router.get("/favorites", auth, controller.getFavorites);

@@ -7,7 +7,7 @@ export default function Navbar() {
 
   const logout = () => {
     localStorage.clear();
-    navigate("/");
+    navigate("/home");
   };
 
   return (
@@ -71,6 +71,8 @@ export default function Navbar() {
               </Link>
               <Link to="/dashboard/admin/categories" className="nav-link">
                 Catégories
+              </Link>
+              <Link to="/dashboard/admin/pdfBooks" className="nav-link">
               </Link>
               <button onClick={logout} className="btn-primary">
                 Déconnexion

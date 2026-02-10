@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children, role }) {
 
   // Rôle requis mais incorrect
   if (role && role !== userRole) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   // Tout est OK → afficher la page

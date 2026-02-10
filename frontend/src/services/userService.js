@@ -23,3 +23,5 @@ export const updateMe = (data) => api.put("/users/me", data);
 
 // Récupère les statistiques globales (users, books)
 export const getStats = () => api.get("/stats");
+
+export const getStatsFavorites = () => api.get("/dashboard");

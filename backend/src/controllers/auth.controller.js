@@ -40,6 +40,10 @@ exports.login = async (req, res) => {
   if (!match)
     return res.status(401).json({ message: "Identifiants invalides" });
 
+  // Vérifier si le compte est actif (sauf pour les admins)
+  if (!user.isActive && user.role !== "admin")
+    return res.status(403).json({ message: "Ce compte a été désactivé" });
+
   const token = generateToken(user);
 
   res.json({

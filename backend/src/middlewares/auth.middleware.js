@@ -21,6 +21,11 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: "Utilisateur non trouvé" });
     }
 
+    // Vérifier si le compte est actif (sauf pour les admins)
+    if (!user.isActive && user.role !== "admin") {
+      return res.status(403).json({ message: "Ce compte a été désactivé" });
+    }
+
     req.user = user; // 🔥 USER COMPLET
     next();
   } catch (error) {
