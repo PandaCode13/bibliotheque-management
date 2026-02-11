@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { getStats } from "../services/userService";
-import { getFavorites } from "../services/userService";
 
 // frontend/src/pages/AdminDashboard.jsx
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ users: 0, books: 0, categories: 0, favoris: 0});
+  const [stats, setStats] = useState({ users: 0, books: 0, categories: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -108,21 +107,7 @@ export default function AdminDashboard() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">
-          <h3 className="text-lg font-semibold text-gray-700">
-            Nombre total des Favoris 
-          </h3>
 
-          {!loading && !error ? (
-            <p className="mt-4 text-4xl font-bold text-[#0F4C5C]">
-              {stats.favoris}
-            </p>
-          ) : (
-            <p className="mt-4 text-gray-400">
-              Chargement...
-            </p>
-          )}
-        </div>
       </div>
     </div>
   );

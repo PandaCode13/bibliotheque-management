@@ -19,6 +19,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/users", userRoutes);
+app.use("/uploads", express.static("uploads"));
 
 app.get("/api/health", (_, res) => {
   res.json({ status: "OK" });

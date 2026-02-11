@@ -26,3 +26,10 @@ export const getCommentsByBook = (id) =>
 
 export const addComment = (id, text) =>
   api.post(`/books/${id}/comments`, { text });
+
+export const importBooks = (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return api.post("/books/import", formData);
+};

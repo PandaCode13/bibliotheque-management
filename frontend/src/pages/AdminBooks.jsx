@@ -25,6 +25,9 @@ export default function AdminBooks() {
     language: "",
     publisher: "",
   });
+  const [preview, setPreview] = useState(null);
+  const [cover, setCover] = useState(null);
+  const [coverUrl, setCoverUrl] = useState("");
 
   /* ======================
         LOAD DATA
@@ -58,6 +61,16 @@ export default function AdminBooks() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleCoverChange = (e) => {
+  const file = e.target.files[0];
+  setCover(file);
+
+  if (file) {
+    setPreview(URL.createObjectURL(file));
+  }
+};
+
+
   /* ======================
         CREATE/UPDATE BOOK
   ====================== */
@@ -67,10 +80,24 @@ export default function AdminBooks() {
     setSuccess("");
 
     try {
-      const bookData = {
-        ...formData,
-        authors: formData.authors.split(",").map((a) => a.trim()),
-      };
+      const bookData = new FormData();
+
+bookData.append("title", formData.title);
+bookData.append("isbn", formData.isbn);
+bookData.append("category", formData.category);
+bookData.append("language", formData.language);
+bookData.append("publisher", formData.publisher);
+bookData.append(
+  "authors",
+  JSON.stringify(formData.authors.split(",").map((a) => a.trim()))
+);
+
+if (cover) {
+  bookData.append("cover", cover);
+} else if (coverUrl.trim() !== "") {
+  bookData.append("coverImage", coverUrl);
+}
+
 
       if (editingBook) {
         // Modification
@@ -263,6 +290,26 @@ export default function AdminBooks() {
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleCoverChange}
+                className="px-4 py-2 border rounded-lg"
+              />
+              <input
+                type="text"
+                placeholder="Ou coller une URL d'image"
+                value={coverUrl}
+                onChange={(e) => setCoverUrl(e.target.value)}
+                className="px-4 py-2 border rounded-lg"
+              />
+{preview && (
+  <img
+    src={preview}
+    alt="Preview"
+    className="w-24 h-32 object-cover rounded mt-2"
+  />
+)}
               <div className="flex gap-2 md:col-span-2">
                 <button
                   type="submit"
@@ -295,6 +342,7 @@ export default function AdminBooks() {
               <th className="p-3 text-left">Auteurs</th>
               <th className="p-3 text-left">ISBN</th>
               <th className="p-3 text-left">Catégorie</th>
+              <th className="p-3 text-left">Cover</th>
               <th className="p-3 text-center">Actions</th>
             </tr>
           </thead>
@@ -333,6 +381,21 @@ export default function AdminBooks() {
                 <td className="p-3 text-gray-600">
                   {book.category?.name || "-"}
                 </td>
+
+                <td className="p-3">
+                  {book.coverImage && (
+                    <img
+                      src={
+                        book.coverImage.startsWith("http")
+                          ? book.coverImage
+                          : `http://localhost:5000/${book.coverImage}`
+                        }
+                      alt={book.title}
+                      className="w-16 h-24 object-cover rounded"
+                    />
+                  )}
+                 </td>
+
 
                 <td className="p-3 text-center space-x-2">
                   <button

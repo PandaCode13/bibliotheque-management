@@ -72,7 +72,8 @@ export default function Navbar() {
               <Link to="/dashboard/admin/categories" className="nav-link">
                 Catégories
               </Link>
-              <Link to="/dashboard/admin/pdfBooks" className="nav-link">
+              <Link to="/dashboard/admin/import-books" className="nav-link">
+                Importer Livres
               </Link>
               <button onClick={logout} className="btn-primary">
                 Déconnexion

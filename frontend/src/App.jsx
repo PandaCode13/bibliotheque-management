@@ -19,6 +19,7 @@ import UserProfiles from "./pages/UserProfiles";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminGestionCategories from "./pages/AdminGestionCategories";
 import AdminBooks from "./pages/AdminBooks";
+import AdminImportBooks from "./pages/AdminImportBooks";
 import AdminGestionUtilisateurs from "./pages/AdminGestionUtilisateurs";
 
 import ForgotPassword from "./pages/ForgotPassword";
@@ -114,6 +115,15 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route 
+          path = "/dashboard/admin/import-books" 
+          element = {
+            <ProtectedRoute role="admin">
+              <AdminImportBooks />
+            </ProtectedRoute>
+          } 
+          />
       </Routes>
     </>
   );

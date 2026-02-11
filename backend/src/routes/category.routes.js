@@ -6,16 +6,47 @@ const auth = require("../middlewares/auth.middleware");
 const isAdmin = require("../middlewares/admin.middleware");
 
 /* =========================
-   PUBLIC
+   ROUTES PUBLIQUES
 ========================= */
+
+// Récupérer les catégories pour le catalogue
 router.get("/public", controller.getPublicCategories);
 
+
 /* =========================
-   ADMIN
+   ROUTES ADMIN
 ========================= */
-router.get("/", auth, isAdmin, controller.getAllCategories);
-router.post("/", auth, isAdmin, controller.createCategory);
-router.put("/:id", auth, isAdmin, controller.updateCategory);
-router.delete("/:id", auth, isAdmin, controller.deleteCategory);
+
+// Récupérer toutes les catégories (admin)
+router.get(
+  "/",
+  auth,
+  isAdmin,
+  controller.getAllCategories
+);
+
+// Créer une catégorie
+router.post(
+  "/",
+  auth,
+  isAdmin,
+  controller.createCategory
+);
+
+// Modifier une catégorie
+router.put(
+  "/:id",
+  auth,
+  isAdmin,
+  controller.updateCategory
+);
+
+// Supprimer une catégorie
+router.delete(
+  "/:id",
+  auth,
+  isAdmin,
+  controller.deleteCategory
+);
 
 module.exports = router;

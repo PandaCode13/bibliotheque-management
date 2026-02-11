@@ -1,43 +1,57 @@
 const Book = require("../models/book.model");
 const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
+const fs = require("fs");
+const csv = require("csv-parser");
+const mongoose = require("mongoose");
 
-exports.createBook = async (req, res) => {
+/* =========================
+   CREATE BOOK
+========================= */
+const createBook = async (req, res) => {
   try {
-    const book = await Book.create(req.body);
+    const data = { ...req.body };
+
+    // Parse authors (FormData → string JSON)
+    if (req.body.authors) {
+      data.authors = JSON.parse(req.body.authors);
+    }
+
+    // Handle cover image
+    if (req.file) {
+      data.coverImage = req.file.path;
+    }
+
+    const book = await Book.create(data);
     const populatedBook = await Book.findById(book._id).populate("category");
+
     res.status(201).json(populatedBook);
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la création du livre", error: error.message });
+    res.status(500).json({
+      message: "Erreur lors de la création du livre",
+      error: error.message,
+    });
   }
 };
 
-exports.getAllBooksAdmin = async (_, res) => {
+/* =========================
+   UPDATE BOOK
+========================= */
+const updateBook = async (req, res) => {
   try {
-    const books = await Book.find()
-      .populate("category")
-      .sort({ createdAt: -1 });
-    res.json(books);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors du chargement des livres", error: error.message });
-  }
-};
+    const data = { ...req.body };
 
-exports.getBookById = async (req, res) => {
-  try {
-    const book = await Book.findById(req.params.id).populate("category");
-    if (!book) return res.status(404).json({ message: "Livre introuvable" });
-    res.json(book);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la récupération du livre", error: error.message });
-  }
-};
+    if (req.body.authors) {
+      data.authors = JSON.parse(req.body.authors);
+    }
 
-exports.updateBook = async (req, res) => {
-  try {
+    if (req.file) {
+      data.coverImage = req.file.path;
+    }
+
     const book = await Book.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      data,
       { new: true }
     ).populate("category");
 
@@ -47,11 +61,17 @@ exports.updateBook = async (req, res) => {
 
     res.json(book);
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la modification du livre", error: error.message });
+    res.status(500).json({
+      message: "Erreur lors de la modification du livre",
+      error: error.message,
+    });
   }
 };
 
-exports.deleteBook = async (req, res) => {
+/* =========================
+   DELETE BOOK
+========================= */
+const deleteBook = async (req, res) => {
   try {
     const book = await Book.findByIdAndDelete(req.params.id);
 
@@ -59,33 +79,79 @@ exports.deleteBook = async (req, res) => {
       return res.status(404).json({ message: "Livre introuvable" });
     }
 
+    // Supprimer image si existante
+    if (book.coverImage && fs.existsSync(book.coverImage)) {
+      fs.unlinkSync(book.coverImage);
+    }
+
     res.json({ message: "Livre supprimé avec succès" });
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la suppression du livre", error: error.message });
+    res.status(500).json({
+      message: "Erreur lors de la suppression du livre",
+      error: error.message,
+    });
   }
 };
 
-exports.getPublicBooks = async (req, res) => {
+/* =========================
+   ADMIN - GET ALL
+========================= */
+const getAllBooksAdmin = async (_, res) => {
+  try {
+    const books = await Book.find()
+      .populate("category")
+      .sort({ createdAt: -1 });
+
+    res.json(books);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors du chargement des livres",
+      error: error.message,
+    });
+  }
+};
+
+/* =========================
+   GET BY ID
+========================= */
+const getBookById = async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id).populate("category");
+
+    if (!book) {
+      return res.status(404).json({ message: "Livre introuvable" });
+    }
+
+    res.json(book);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur récupération livre",
+      error: error.message,
+    });
+  }
+};
+
+/* =========================
+   PUBLIC BOOKS
+========================= */
+const getPublicBooks = async (req, res) => {
   try {
     const { q, category, language } = req.query;
     const filter = {};
 
-    // 🔍 Recherche texte (title, authors array, isbn)
     if (q && q.trim() !== "") {
       const searchRegex = { $regex: q, $options: "i" };
       filter.$or = [
         { title: searchRegex },
-        { authors: searchRegex },  // Works with arrays in MongoDB
+        { authors: searchRegex },
         { isbn: searchRegex },
       ];
     }
 
-    // 🏷️ Catégorie
     if (category) {
       filter.category = category;
     }
 
-    // 🌍 Langue
     if (language && language.trim() !== "") {
       filter.language = { $regex: language, $options: "i" };
     }
@@ -96,25 +162,28 @@ exports.getPublicBooks = async (req, res) => {
 
     res.json(books);
   } catch (error) {
-    console.error("PUBLIC BOOK ERROR:", error);
     res.status(500).json({ message: "Erreur serveur catalogue" });
   }
 };
 
-exports.getPublicBookById = async (req, res) => {
+const getPublicBookById = async (req, res) => {
   try {
     const book = await Book.findById(req.params.id).populate("category");
+
     if (!book) {
       return res.status(404).json({ message: "Livre introuvable" });
     }
+
     res.json(book);
   } catch (error) {
-    console.error("GET PUBLIC BOOK ERROR:", error);
     res.status(500).json({ message: "Erreur serveur livre" });
   }
 };
 
-exports.likeBook = async (req, res) => {
+/* =========================
+   LIKE / DISLIKE
+========================= */
+const likeBook = async (req, res) => {
   const user = await User.findById(req.user.id);
   const book = await Book.findById(req.params.id);
 
@@ -141,7 +210,7 @@ exports.likeBook = async (req, res) => {
   res.json({ likes: book.likesCount, dislikes: book.dislikesCount });
 };
 
-exports.dislikeBook = async (req, res) => {
+const dislikeBook = async (req, res) => {
   const user = await User.findById(req.user.id);
   const book = await Book.findById(req.params.id);
 
@@ -168,7 +237,10 @@ exports.dislikeBook = async (req, res) => {
   res.json({ likes: book.likesCount, dislikes: book.dislikesCount });
 };
 
-exports.addComment = async (req, res) => {
+/* =========================
+   COMMENTS
+========================= */
+const addComment = async (req, res) => {
   const comment = await Comment.create({
     book: req.params.id,
     user: req.user.id,
@@ -178,10 +250,94 @@ exports.addComment = async (req, res) => {
   res.status(201).json(comment);
 };
 
-exports.getCommentsByBook = async (req, res) => {
+const getCommentsByBook = async (req, res) => {
   const comments = await Comment.find({ book: req.params.id })
     .populate("user", "firstName lastName avatar")
     .sort({ createdAt: -1 });
 
   res.json(comments);
+};
+
+const importBooksFromCSV = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "Fichier requis" });
+    }
+
+    const results = [];
+
+    fs.createReadStream(req.file.path)
+      .pipe(csv())
+      .on("data", (data) => {
+        results.push(data);
+      })
+      .on("end", async () => {
+        try {
+          for (const row of results) {
+
+            // 🔥 FIX COVER IMAGE
+            let coverImage = row.coverImage;
+
+            if (coverImage && !coverImage.startsWith("http" || "https")) {
+              coverImage = `uploads/${coverImage}`;
+            }
+
+            await Book.create({
+              title: row.title,
+              authors: row.authors ? row.authors.split("|") : [],
+              isbn: row.isbn || undefined,
+              description: row.description || "",
+              coverImage,
+              fileUrl: row.fileUrl || "",
+              fileType: row.fileType || undefined,
+              category: row.category || null,
+              language: row.language || "",
+              publisher: row.publisher || "",
+              publishedDate: row.publishedDate || null,
+              totalCopies: Number(row.totalCopies) || 1,
+              availableCopies: Number(row.availableCopies) || 1,
+              tags: row.tags ? row.tags.split("|") : [],
+              likesCount: Number(row.likesCount) || 0,
+              dislikesCount: Number(row.dislikesCount) || 0,
+            });
+          }
+
+          fs.unlinkSync(req.file.path);
+
+          res.json({
+            message: `${results.length} livres importés avec succès`,
+          });
+
+        } catch (err) {
+          res.status(500).json({
+            message: "Erreur insertion livres",
+            error: err.message,
+          });
+        }
+      });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur import CSV",
+      error: error.message,
+    });
+  }
+};
+
+/* =========================
+   EXPORTS
+========================= */
+module.exports = {
+  createBook,
+  updateBook,
+  deleteBook,
+  getAllBooksAdmin,
+  getBookById,
+  getPublicBooks,
+  getPublicBookById,
+  likeBook,
+  dislikeBook,
+  addComment,
+  getCommentsByBook,
+  importBooksFromCSV
 };
