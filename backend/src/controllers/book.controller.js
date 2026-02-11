@@ -70,12 +70,13 @@ exports.getPublicBooks = async (req, res) => {
     const { q, category, language } = req.query;
     const filter = {};
 
-    // 🔍 Recherche texte
+    // 🔍 Recherche texte (title, authors array, isbn)
     if (q && q.trim() !== "") {
+      const searchRegex = { $regex: q, $options: "i" };
       filter.$or = [
-        { title: { $regex: q, $options: "i" } },
-        { authors: { $regex: q, $options: "i" } },
-        { isbn: { $regex: q, $options: "i" } },
+        { title: searchRegex },
+        { authors: searchRegex },  // Works with arrays in MongoDB
+        { isbn: searchRegex },
       ];
     }
 
