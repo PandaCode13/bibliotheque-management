@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { getPublicBooks } from "../services/bookService";
 import { Link } from "react-router-dom";
 import { getPublicCategories } from "../services/categoryService";
@@ -11,6 +11,7 @@ export default function Catalog() {
     category: "",
     language: "",
   });
+  const [loading, setLoading] = useState(false);
 
 const load = async () => {
   const params = {};
@@ -39,6 +40,14 @@ useEffect(() => {
 useEffect(() => {
   load();
 }, []);
+
+useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    load();
+  }
+  , 500); // délai de 500ms après la dernière frappe
+  return () => clearTimeout(delayDebounce); // nettoyer le timeout si les filtres changent avant le délai
+}, [filters.q, filters.category, filters.language]);
 
 
   return (
@@ -133,14 +142,19 @@ useEffect(() => {
                              transition overflow-hidden"
                 >
                   <img
-                    src={
-                      b.coverImage ||
-                      "https://via.placeholder.com/300x400?text=Livre"
-                    }
+                    src={ b.coverImage
+                          ? b.coverImage.startsWith("http")
+                          ? b.coverImage
+                          : `http://localhost:5000/${b.coverImage}`
+                          : "https://via.placeholder.com/300x400?text=Livre"
+                        }
                     alt={b.title}
                     className="h-60 w-full object-cover"
-                  />
-
+                    onError={(e) => {
+                              e.target.src = "https://via.placeholder.com/300x400?text=Livre";
+                            }}
+                    />
+                    
                   <div className="p-4 space-y-2">
                     <h3 className="font-semibold text-[#0F4C5C] truncate">
                       {b.title}

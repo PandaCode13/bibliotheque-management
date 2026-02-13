@@ -9,7 +9,14 @@ export default function Home() {
 
   useEffect(() => {
     getPublicBooks()
-      .then((res) => setBooks(res.data))
+      .then((res) => {
+        const allBooks = res.data;
+        // Mélanger le tableau
+        const shuffled = allBooks.sort(() => 0.5 - Math.random());
+        // Prendre seulement 5 livres
+        const randomFive = shuffled.slice(0, 5);
+        setBooks(randomFive);
+      })
       .finally(() => setLoading(false));
   }, []);
 
