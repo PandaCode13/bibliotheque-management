@@ -24,6 +24,7 @@ export default function AdminBooks() {
     category: "",
     language: "",
     publisher: "",
+    pdfBook: "",
   });
   const [preview, setPreview] = useState(null);
   const [cover, setCover] = useState(null);
@@ -62,14 +63,13 @@ export default function AdminBooks() {
   };
 
   const handleCoverChange = (e) => {
-  const file = e.target.files[0];
-  setCover(file);
+    const file = e.target.files[0];
+    setCover(file);
 
-  if (file) {
-    setPreview(URL.createObjectURL(file));
-  }
-};
-
+    if (file) {
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
   /* ======================
         CREATE/UPDATE BOOK
@@ -82,31 +82,27 @@ export default function AdminBooks() {
     try {
       const bookData = new FormData();
 
-bookData.append("title", formData.title);
-bookData.append("isbn", formData.isbn);
-bookData.append("category", formData.category);
-bookData.append("language", formData.language);
-bookData.append("publisher", formData.publisher);
-bookData.append(
-  "authors",
-  JSON.stringify(formData.authors.split(",").map((a) => a.trim()))
-);
+      bookData.append("title", formData.title);
+      bookData.append("isbn", formData.isbn);
+      bookData.append("category", formData.category);
+      bookData.append("language", formData.language);
+      bookData.append("publisher", formData.publisher);
+      bookData.append(
+        "authors",
+        JSON.stringify(formData.authors.split(",").map((a) => a.trim())),
+      );
+      bookData.append("pdfBook", formData.pdfBook);
 
-if (cover) {
-  bookData.append("cover", cover);
-} else if (coverUrl.trim() !== "") {
-  bookData.append("coverImage", coverUrl);
-}
-
+      if (cover) {
+        bookData.append("cover", cover);
+      } else if (coverUrl.trim() !== "") {
+        bookData.append("coverImage", coverUrl);
+      }
 
       if (editingBook) {
         // Modification
         const res = await updateBook(editingBook._id, bookData);
-        setBooks(
-          books.map((b) =>
-            b._id === editingBook._id ? res.data : b
-          )
-        );
+        setBooks(books.map((b) => (b._id === editingBook._id ? res.data : b)));
         setSuccess("Livre modifié avec succès !");
       } else {
         // Création
@@ -122,6 +118,7 @@ if (cover) {
         category: "",
         language: "",
         publisher: "",
+        pdfBook: ""
       });
       setEditingBook(null);
       setShowForm(false);
@@ -143,6 +140,7 @@ if (cover) {
       category: book.category?._id || "",
       language: book.language || "",
       publisher: book.publisher || "",
+      pdfBook: book.pdfBook || ""
     });
     setShowForm(true);
   };
@@ -151,7 +149,8 @@ if (cover) {
         DELETE BOOK
   ====================== */
   const removeBook = async (id) => {
-    if (!window.confirm("Supprimer ce livre ? Cette action est irréversible.")) return;
+    if (!window.confirm("Supprimer ce livre ? Cette action est irréversible."))
+      return;
 
     try {
       setError("");
@@ -187,7 +186,6 @@ if (cover) {
 
   return (
     <div className="space-y-10 m-5">
-
       {/* HEADER */}
       <div>
         <h2 className="text-2xl font-bold text-[#0F4C5C]">
@@ -235,7 +233,10 @@ if (cover) {
             <h3 className="text-lg font-bold text-[#0F4C5C] mb-4">
               {editingBook ? "Modifier le livre" : "Ajouter un nouveau livre"}
             </h3>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <form
+              onSubmit={handleSubmit}
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+            >
               <input
                 type="text"
                 name="title"
@@ -271,7 +272,9 @@ if (cover) {
               >
                 <option value="">Sélectionnez une catégorie</option>
                 {categories.map((c) => (
-                  <option key={c._id} value={c._id}>{c.name}</option>
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
               <input
@@ -303,13 +306,24 @@ if (cover) {
                 onChange={(e) => setCoverUrl(e.target.value)}
                 className="px-4 py-2 border rounded-lg"
               />
-{preview && (
-  <img
-    src={preview}
-    alt="Preview"
-    className="w-24 h-32 object-cover rounded mt-2"
-  />
-)}
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-24 h-32 object-cover rounded mt-2"
+                />
+              )}
+
+              <input
+                type="text"
+                name="pdfBook"
+                id="pdfBook"
+                placeholder="URL du PDF"
+                value={formData.pdfBook}
+                onChange={handleFormChange}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
+              />
+
               <div className="flex gap-2 md:col-span-2">
                 <button
                   type="submit"
@@ -366,17 +380,11 @@ if (cover) {
 
             {paginatedBooks.map((book) => (
               <tr key={book._id} className="border-t">
-                <td className="p-3 font-semibold">
-                  {book.title}
-                </td>
+                <td className="p-3 font-semibold">{book.title}</td>
 
-                <td className="p-3 text-gray-600">
-                  {book.authors.join(", ")}
-                </td>
+                <td className="p-3 text-gray-600">{book.authors.join(", ")}</td>
 
-                <td className="p-3 text-gray-600">
-                  {book.isbn || "-"}
-                </td>
+                <td className="p-3 text-gray-600">{book.isbn || "-"}</td>
 
                 <td className="p-3 text-gray-600">
                   {book.category?.name || "-"}
@@ -389,13 +397,12 @@ if (cover) {
                         book.coverImage.startsWith("http")
                           ? book.coverImage
                           : `http://localhost:5000/${book.coverImage}`
-                        }
+                      }
                       alt={book.title}
                       className="w-16 h-24 object-cover rounded"
                     />
                   )}
-                 </td>
-
+                </td>
 
                 <td className="p-3 text-center space-x-2">
                   <button
@@ -423,7 +430,9 @@ if (cover) {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           {/* Éléments par page */}
           <div className="flex items-center gap-2">
-            <label className="text-gray-700 font-semibold">Éléments par page :</label>
+            <label className="text-gray-700 font-semibold">
+              Éléments par page :
+            </label>
             <select
               value={itemsPerPage}
               onChange={handleItemsPerPageChange}
@@ -439,7 +448,8 @@ if (cover) {
 
           {/* Info pagination */}
           <div className="text-gray-600 text-sm">
-            Affichage {startIdx + 1} à {Math.min(endIdx, books.length)} sur {books.length} livres
+            Affichage {startIdx + 1} à {Math.min(endIdx, books.length)} sur{" "}
+            {books.length} livres
           </div>
 
           {/* Navigation */}
@@ -466,7 +476,6 @@ if (cover) {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

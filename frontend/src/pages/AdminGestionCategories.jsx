@@ -99,11 +99,7 @@ export default function AdminGestionCategories() {
         description: editDescription.trim() || null,
       });
 
-      setCategories(
-        categories.map((c) =>
-          c._id === id ? res.data : c
-        )
-      );
+      setCategories(categories.map((c) => (c._id === id ? res.data : c)));
 
       setEditId(null);
     } catch (err) {
@@ -113,7 +109,6 @@ export default function AdminGestionCategories() {
 
   return (
     <div className="space-y-10 m-5">
-
       {/* ======================
             AJOUT CATÉGORIE
       ====================== */}
@@ -186,17 +181,13 @@ export default function AdminGestionCategories() {
                   )}
                 </td>
 
-                <td className="p-3 text-gray-500">
-                  {cat.slug}
-                </td>
+                <td className="p-3 text-gray-500">{cat.slug}</td>
 
                 <td className="p-3">
                   {editId === cat._id ? (
                     <textarea
                       value={editDescription}
-                      onChange={(e) =>
-                        setEditDescription(e.target.value)
-                      }
+                      onChange={(e) => setEditDescription(e.target.value)}
                       rows={2}
                       className="w-full px-2 py-1 border rounded"
                     />
@@ -234,7 +225,6 @@ export default function AdminGestionCategories() {
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  getPublicBookById,
-  getCommentsByBook,
-} from "../services/bookService";
+import { getPublicBookById, getCommentsByBook } from "../services/bookService";
 import { toggleFavorite, getFavorites } from "../services/userService";
 import { likeBook, dislikeBook, addComment } from "../services/bookService";
 
@@ -21,10 +18,7 @@ export default function BookDetails() {
   const userRole = localStorage.getItem("role"); // "user" | "admin"
 
   useEffect(() => {
-    Promise.all([
-      getPublicBookById(id),
-      getCommentsByBook(id),
-    ])
+    Promise.all([getPublicBookById(id), getCommentsByBook(id)])
       .then(([bookRes, commentsRes]) => {
         setBook(bookRes.data);
         setComments(commentsRes.data);
@@ -83,18 +77,21 @@ export default function BookDetails() {
   return (
     <div className="min-h-screen bg-[#FAFAF9] px-6 py-12">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm p-8 grid grid-cols-1 md:grid-cols-3 gap-10">
-
         {/* IMAGE */}
         <img
           src={
-            book.coverImage && book.coverImage.trim() !== ""
-              ? book.coverImage
-              : "https://via.placeholder.com/300x420?text=Pas+d%27image"
+            book.coverImage
+              ? (book.coverImage.startsWith("http")
+                  ? book.coverImage
+                  : `http://localhost:5000/${book.coverImage.replace(/\\/g, "/")}`)
+              : "https://via.placeholder.com/300x400?text=Livre"
           }
           alt={book.title}
-          className="w-full max-w-xs h-[420px] object-contain bg-gray-100 rounded-xl shadow"
+          className="h-60 w-full object-cover align-middle rounded-lg bg-gray-100"
+          onError={(e) => {
+            e.target.src = "https://via.placeholder.com/300x400?text=Livre";
+          }}
         />
-
         {/* CONTENT */}
         <div className="md:col-span-2 space-y-4 text-[#0F4C5C]">
           <h2 className="text-3xl font-bold">{book.title}</h2>
@@ -102,15 +99,21 @@ export default function BookDetails() {
             {book.authors?.join(", ") || "Auteur inconnu"}
           </p>
 
+          <br />
+
+          <h3 className="text-sm font-medium text-gray-700">Description</h3>
+          <p>{book.description || "Aucune description disponible."}</p>
+
           {/* ================= ACTIONS USER ONLY ================= */}
           {isAuthenticated && userRole === "user" && (
             <div className="flex gap-4 pt-2">
               <button
                 onClick={handleFavorite}
                 className={`px-5 py-2 rounded-full font-semibold transition
-                  ${isFavorite
-                    ? "bg-[#9DBEBB]"
-                    : "border border-[#9DBEBB] hover:bg-[#9DBEBB]"
+                  ${
+                    isFavorite
+                      ? "bg-[#9DBEBB]"
+                      : "border border-[#9DBEBB] hover:bg-[#9DBEBB]"
                   }`}
               >
                 ⭐ Favori
@@ -135,20 +138,16 @@ export default function BookDetails() {
           {/* MESSAGE PUBLIC */}
           {!isAuthenticated && (
             <p className="text-sm text-gray-500 italic">
-              Connectez-vous pour aimer, commenter ou ajouter ce livre à vos favoris.
+              Connectez-vous pour aimer, commenter ou ajouter ce livre à vos
+              favoris.
             </p>
           )}
-
-          <p className="text-gray-700">{book.description}</p>
         </div>
 
         {/* ================= COMMENTS ================= */}
         <div className="md:col-span-3 pt-6">
-
           {/* AJOUT COMMENTAIRE (USER ONLY) */}
           {isAuthenticated && userRole === "user" && (
-            
-
             <div className="flex gap-2 mb-4">
               <input
                 value={comment}
@@ -172,13 +171,11 @@ export default function BookDetails() {
                 key={c._id}
                 className="bg-[#FAFAF9] border border-[#DDE5E4] rounded-lg p-3 text-sm"
               >
-                <strong>{c.user?.firstName || "Utilisateur"} :</strong>{" "}
-                {c.text}
+                <strong>{c.user?.firstName || "Utilisateur"} :</strong> {c.text}
               </div>
             ))}
           </div>
         </div>
-
       </div>
     </div>
   );

@@ -124,13 +124,6 @@ export default function UserDashboard() {
           </h2>
         </section>
 
-        {/* CATÉGORIES RECHERCHÉES */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-[#0F4C5C]">
-            🏷️ Catégories recherchées
-          </h2>
-        </section>
-
       </div>
     </div>
   );

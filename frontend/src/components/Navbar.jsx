@@ -14,26 +14,42 @@ export default function Navbar() {
   return (
     <nav className="bg-[#FAFAF9] border-b border-[#DDE5E4] px-6 py-4 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-
         {/* LOGO */}
         <div className="flex gap-1 items-center">
-          <img src="/favicon.png" alt="Library Digital logo" className="w-10 h-10 object-contain" />
+          <img
+            src="/favicon.png"
+            alt="Library Digital logo"
+            className="w-10 h-10 object-contain"
+          />
           <Link
             to="/"
-            className="text-xl font-bold tracking-wide text-[#0F4C5C]">
-              Digital Library
+            className="text-xl font-bold tracking-wide text-[#0F4C5C]"
+          >
+            Digital Library
           </Link>
         </div>
 
         <div className="flex items-center gap-6 text-sm font-medium">
-
           {/* PUBLIC */}
           {!token && (
             <>
-              <Link to="/home" className="nav-link">Accueil</Link>
-              <Link to="catalog" className="nav-link"> Catalogue</Link>
-              <Link to="/login" className="nav-link">Connexion</Link>
-              <Link to="/register" className="px-4 py-2 rounded-full border border-[#9DBEBB] text-[#0F4C5C]"> Inscription </Link>
+              <Link to="/home" className="nav-link">
+                Accueil
+              </Link>
+              <Link to="catalog" className="nav-link">
+                {" "}
+                Catalogue
+              </Link>
+              <Link to="/login" className="nav-link">
+                Connexion
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-2 rounded-full border border-[#9DBEBB] text-[#0F4C5C]"
+              >
+                {" "}
+                Inscription{" "}
+              </Link>
             </>
           )}
 
