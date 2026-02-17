@@ -5,6 +5,7 @@ export default function Navbar() {
   const token = localStorage.getItem("token");
   const role = localStorage.getItem("role");
 
+  // A chaque déconnexion, on nettoie le localStorage et on redirige vers l'accueil
   const logout = () => {
     localStorage.clear();
     navigate("/home");

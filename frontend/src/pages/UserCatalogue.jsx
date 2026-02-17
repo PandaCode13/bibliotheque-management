@@ -85,7 +85,8 @@ useEffect(() => {
                 setFilters({ ...filters, category: e.target.value })
               }
               className="h-[52px] px-4 border border-gray-300 rounded-lg bg-white
-                         focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+                        focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]
+                        relative z-50 appearance-none"
             >
               <option value="">Toutes les catégories</option>
               {categories.map((c) => (

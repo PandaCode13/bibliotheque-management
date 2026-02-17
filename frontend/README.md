@@ -1,1 +1,0 @@
-Pour éxécuter le frontend: npm run dev
