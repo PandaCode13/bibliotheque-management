@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getStats } from "../services/userService";
+import { Link } from "react-router-dom";
 
 
 // frontend/src/pages/AdminDashboard.jsx
@@ -8,36 +9,18 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let mounted = true;
-    getStats()
-      .then((res) => {
-        if (mounted) {
-          setStats(res.data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (mounted) {
-          setError(err);
-          setLoading(false);
-        }
-      });
-    return () => (mounted = false);
-  }, []);
-
-  // useEffect(() => {
-  //   axios
-  //     .get("http://localhost:5000/api/admin/dashboard-stats")
-  //     .then((res) => setStats(res.data))
-  //     .catch((err) => console.error(err));
-  // }, []);
 
   useEffect(() => {
     getStats()
       .then((res) => setStats(res.data))
       .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    if (stats.users || stats.books || stats.categories) {
+      setLoading(false);
+    }
+  }, [stats]);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -69,11 +52,10 @@ export default function AdminDashboard() {
               {stats.users}
             </p>
           )}
-
-          {/* Badge d’évolution */}
-          <span className="inline-block mt-2 text-sm text-green-600">
-            +12% ce mois
-          </span>
+          {/* OPTIONNEL : lien rapide */}
+          <Link to="/dashboard/admin/users" className="mt-4 text-sm text-[#0F4C5C] hover:underline">
+            Gérer les utilisateurs →
+          </Link>
         </div>
 
         {/* CARD LIVRES */}
@@ -89,9 +71,9 @@ export default function AdminDashboard() {
           )}
 
           {/* OPTIONNEL : lien rapide */}
-          {/* <button className="mt-4 text-sm text-[#0F4C5C] hover:underline">
+          <Link to="/dashboard/admin/books" className="mt-4 text-sm text-[#0F4C5C] hover:underline">
             Voir tous les livres →
-          </button> */}
+          </Link>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">

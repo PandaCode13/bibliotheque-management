@@ -160,7 +160,9 @@ const getPublicBooks = async (req, res) => {
       .populate("category", "name")
       .sort({ createdAt: -1 });
 
-    res.json(books);
+    const visibleBooks = books.filter((b) => b.visible);
+
+    res.json(visibleBooks);
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur catalogue" });
   }

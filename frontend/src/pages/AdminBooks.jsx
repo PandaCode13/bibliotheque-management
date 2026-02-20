@@ -25,10 +25,15 @@ export default function AdminBooks() {
     language: "",
     publisher: "",
     pdfBook: "",
+    fileType: "",
+    publishedDate: "",
+    resume: "",
   });
   const [preview, setPreview] = useState(null);
   const [cover, setCover] = useState(null);
   const [coverUrl, setCoverUrl] = useState("");
+  const [publishedDate, setPublishedDate] = useState("");
+  const [resume, setResume] = useState("");
 
   /* ======================
         LOAD DATA
@@ -160,6 +165,25 @@ export default function AdminBooks() {
       setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Erreur lors de la suppression");
+    }
+  };
+
+  const toggleBookVisibility = async (id, currentlyVisible) => {
+    try {
+      setError("");
+      const updatedData = new FormData();
+      updatedData.append("visible", !currentlyVisible);
+      const res = await updateBook(id, updatedData);
+      setBooks(books.map((b) => (b._id === id ? res.data : b)));
+      setSuccess(
+        `Livre ${!currentlyVisible ? "affiché" : "caché"} avec succès !`,
+      );
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          `Erreur lors de la mise à jour de la visibilité`,
+      );
     }
   };
 
@@ -445,6 +469,10 @@ export default function AdminBooks() {
                     className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                   >
                     Supprimer
+                  </button>
+
+                  <button onClick={() => toggleBookVisibility(book._id, book.visible)} className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700">
+                    Afficher/Désafficher
                   </button>
                 </td>
               </tr>

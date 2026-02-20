@@ -25,7 +25,13 @@ import AdminGestionUtilisateurs from "./pages/AdminGestionUtilisateurs";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
+
 import ProtectedRoute from "./components/ProtectedRoute";
+
+// Nettoyage du localStorage au démarrage en mode développement
+if (import.meta.env.DEV) {
+  localStorage.clear();
+}
 
 export default function App() {
   return (

@@ -139,13 +139,7 @@ export default function Catalog() {
                       {b.authors?.join(", ") || "Auteur inconnu"}
                     </p>
 
-                    <Link
-                      to={`/books/${b._id}`}
-                      className="inline-block text-sm font-medium 
-                                 text-[#0F4C5C] hover:text-[#6FAFB0] transition"
-                    >
-                      Voir détails →
-                    </Link>
+                    {/* Pas de lien pour voir les détails des livres ni meme consultez les livres */}
                   </div>
                 </div>
               ))}
