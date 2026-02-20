@@ -104,6 +104,11 @@ export default function BookDetails() {
           <h3 className="text-sm font-medium text-gray-700">Description</h3>
           <p>{book.description || "Aucune description disponible."}</p>
 
+          <br />
+
+          <h3 className="text-sm font-medium text-gray-700">Résumé du livre</h3>
+          <p>{book.resume || "Aucun résumé disponible."}</p>
+
           {/* ================= ACTIONS USER ONLY ================= */}
           {isAuthenticated && userRole === "user" && (
             <div className="flex gap-4 pt-2">

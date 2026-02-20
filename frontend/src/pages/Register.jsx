@@ -7,13 +7,23 @@ export default function Register() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await register({ firstName, lastName, email, password });
-    navigate("/login");
+    setError("");
+    try {
+      await register({ firstName, lastName, email, password });
+      navigate("/login");
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Erreur lors de l'inscription. Veuillez réessayer.");
+      }
+    }
   };
 
   return (
@@ -26,6 +36,9 @@ export default function Register() {
           Inscription
         </h2>
 
+        {error && (
+          <div className="text-red-600 text-center font-semibold">{error}</div>
+        )}
         <div className="space-y-4">
           <input
             value={firstName}

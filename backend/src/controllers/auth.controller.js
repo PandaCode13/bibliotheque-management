@@ -1,5 +1,7 @@
+
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/user.model");
 
 const generateToken = (user) =>
@@ -56,12 +58,14 @@ exports.login = async (req, res) => {
   });
 };
 
+
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(404).json({ message: "Utilisateur introuvable" });
+    // Pour la sécurité, ne pas révéler si l'utilisateur existe ou non
+    return res.json({ message: "Si cet email existe, un lien a été envoyé." });
   }
 
   // Générer token
@@ -77,13 +81,52 @@ exports.forgotPassword = async (req, res) => {
 
   await user.save();
 
-  // ⚠️ MODE DEV : on retourne le lien au lieu d’envoyer un email
-  const resetLink = `http://localhost:5173/reset-password/${token}`;
+  // Générer le lien de réinitialisation
+  const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password/${token}`;
 
-  res.json({
-    message: "Lien de réinitialisation généré",
-    resetLink,
-  });
+  // Envoyer l'email
+  try {
+    await sendMail({
+      to: user.email,
+      subject: "Réinitialisation de votre mot de passe",
+      html: `<p>Bonjour ${user.firstName},</p>
+        <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le lien ci-dessous pour choisir un nouveau mot de passe :</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+        <p>Ce lien est valable 15 minutes.</p>
+        <p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`
+    });
+  } catch (err) {
+    return res.status(500).json({ message: "Erreur lors de l'envoi de l'email." });
+  }
+
+  res.json({ message: "Si cet email existe, un lien a été envoyé." });
+};
+
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  // Pour la sécurité, ne pas révéler si l'utilisateur existe ou non
+  if (!user) {
+    return res.json({ message: "Fonctionnalité de mail désactivée." });
+  }
+
+  // Générer token
+  const token = crypto.randomBytes(32).toString("hex");
+
+  // Stocker version hashée
+  user.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 min
+
+  await user.save();
+
+  // Ici, normalement on enverrait un mail avec le lien de réinitialisation
+  // Mais la fonctionnalité mailer a été supprimée
+  res.json({ message: "Fonctionnalité de mail désactivée." });
 };
 
 /* =====================================================

@@ -38,6 +38,7 @@ export default function AdminImportBooks() {
           type="file"
           accept=".csv"
           onChange={(e) => setFile(e.target.files[0])}
+          placeholder="Sélectionnez un fichier CSV"
           className="border p-2 rounded w-full"
         />
 

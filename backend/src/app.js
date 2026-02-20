@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const router = express.Router();
 require("dotenv").config();
 const app = express();
 
@@ -27,5 +28,7 @@ app.get("/api/health", (_, res) => {
 
 const statsRoutes = require("./routes/stats");
 app.use("/api", statsRoutes);
+
+app.use("/api/admin", require("./routes/admin.routes"));
 
 module.exports = app;

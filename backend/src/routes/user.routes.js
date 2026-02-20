@@ -35,4 +35,8 @@ router.put("/:id/role", auth, isAdmin, controller.updateUserRole);
 router.patch("/:id/status", auth, isAdmin, controller.toggleUserStatus);
 router.delete("/:id", auth, isAdmin, controller.deleteUser);
 
+const changePasswordController = require("../controllers/changePassword.controller");
+// Changement de mot de passe pour utilisateur connecté
+router.post("/change-password", auth, changePasswordController.changePassword);
+
 module.exports = router;

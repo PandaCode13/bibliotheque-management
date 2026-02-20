@@ -30,9 +30,7 @@ const bookSchema = new mongoose.Schema(
 
     publishedDate: { type: Date },
 
-    totalCopies: { type: Number, default: 1 },
-
-    availableCopies: { type: Number, default: 1 },
+    resume: { type: String },
 
     tags: [{ type: String }],
 
@@ -42,10 +40,16 @@ const bookSchema = new mongoose.Schema(
     },
 
     likesCount: { type: Number, default: 0 },
-    
+
     dislikesCount: { type: Number, default: 0 },
+
+    createdAt: { type: Date, default: Date.now },
+    
+    updatedAt: { type: Date, default: Date.now },
+    
   },
-  { timestamps: true }
+  { timestamps: true },
+  
 );
 
 module.exports = mongoose.model("Book", bookSchema);

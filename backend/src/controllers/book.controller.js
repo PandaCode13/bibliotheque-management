@@ -292,13 +292,14 @@ const importBooksFromCSV = async (req, res) => {
               fileType: row.fileType || undefined,
               category: row.category || null,
               language: row.language || "",
+              resume: row.resume || "",
               publisher: row.publisher || "",
               publishedDate: row.publishedDate || null,
-              totalCopies: Number(row.totalCopies) || 1,
-              availableCopies: Number(row.availableCopies) || 1,
               tags: row.tags ? row.tags.split("|") : [],
               likesCount: Number(row.likesCount) || 0,
               dislikesCount: Number(row.dislikesCount) || 0,
+              dateAdded: row.dateAdded ? new Date(row.dateAdded) : Date.now(),
+              addedBy: mongoose.Types.ObjectId(req.user.id),
             });
           }
 

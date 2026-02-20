@@ -313,16 +313,7 @@ export default function AdminGestionUtilisateurs() {
                 </td>
 
                 <td className="p-3 text-center">
-                  <select
-                    value={u.role}
-                    onChange={(e) =>
-                      changeRole(u._id, e.target.value)
-                    }
-                    className="px-2 py-1 border rounded"
-                  >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  {u.role === "admin" ? "Admin" : "User"}
                 </td>
 
                 <td className="p-3 text-center">

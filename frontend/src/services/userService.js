@@ -25,3 +25,10 @@ export const updateMe = (data) => api.put("/users/me", data);
 export const getStats = () => api.get("/stats");
 
 export const getStatsFavorites = () => api.get("/dashboard");
+
+export const changePassword = (currentPassword, newPassword) =>
+  api.post("/users/change-password", { currentPassword, newPassword });
+
+export const getDashboardStats = () => api.get("/admin/dashboard-stats");
+
+export const getMonthlyBooks = () => api.get("/admin/monthly-books");

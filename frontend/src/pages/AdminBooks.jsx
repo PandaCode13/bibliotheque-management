@@ -118,7 +118,7 @@ export default function AdminBooks() {
         category: "",
         language: "",
         publisher: "",
-        pdfBook: ""
+        pdfBook: "",
       });
       setEditingBook(null);
       setShowForm(false);
@@ -140,7 +140,7 @@ export default function AdminBooks() {
       category: book.category?._id || "",
       language: book.language || "",
       publisher: book.publisher || "",
-      pdfBook: book.pdfBook || ""
+      pdfBook: book.pdfBook || "",
     });
     setShowForm(true);
   };
@@ -320,6 +320,34 @@ export default function AdminBooks() {
                 id="pdfBook"
                 placeholder="URL du PDF"
                 value={formData.pdfBook}
+                onChange={handleFormChange}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
+              />
+
+              <input
+                type="text"
+                name="fileType"
+                placeholder="Type de fichier (pdf ou epub)"
+                value={formData.fileType}
+                onChange={handleFormChange}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
+              />
+
+              <input
+                type="text"
+                name="publishedDate"
+                id="publishedDate"
+                placeholder="Date de publication (YYYY-MM-DD)"
+                value={formData.publishedDate}
+                onChange={handleFormChange}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
+              />
+
+              <input
+                type="text"
+                name="resume"
+                placeholder="Résumé"
+                value={formData.resume}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />

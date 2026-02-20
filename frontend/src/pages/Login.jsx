@@ -7,17 +7,27 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  const [error, setError] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await login({ email, password });
-
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("role", res.data.user.role);
-
-    if (res.data.user.role === "admin") {
-      navigate("/dashboard/admin");
-    } else {
-      navigate("/dashboard/user");
+    setError("");
+    try {
+      const res = await login({ email, password });
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.user.role);
+      if (res.data.user.role === "admin") {
+        navigate("/dashboard/admin");
+      } else {
+        navigate("/dashboard/user");
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 403) {
+        setError("Ce compte a été désactivé. Veuillez contacter l'administrateur.");
+      } else if (err.response && err.response.status === 401) {
+        setError("Identifiants invalides.");
+      } else {
+        setError("Erreur lors de la connexion. Veuillez réessayer.");
+      }
     }
   };
 
@@ -31,6 +41,9 @@ export default function Login() {
           Connexion
         </h2>
 
+        {error && (
+          <div className="text-red-600 text-center font-semibold">{error}</div>
+        )}
         <div className="space-y-4">
           <input
             value={email}

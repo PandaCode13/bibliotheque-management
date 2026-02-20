@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -7,22 +8,29 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setMessage("");
-
+    if (password.length < 6) {
+      setMessage("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setMessage("Les mots de passe ne correspondent pas.");
+      return;
+    }
+    setLoading(true);
     try {
       await api.post("/auth/reset-password", {
         token,
         password,
       });
-
       setMessage("Mot de passe réinitialisé avec succès !");
-      setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/dashboard/user"), 1500);
     } catch (err) {
       setMessage("Lien invalide ou expiré.");
     } finally {
@@ -40,14 +48,22 @@ export default function ResetPassword() {
           Réinitialisation
         </h2>
 
+
         <input
           type="password"
           placeholder="Nouveau mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg
-                     focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+        />
+        <input
+          type="password"
+          placeholder="Confirmer le mot de passe"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          required
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
         />
 
         <button

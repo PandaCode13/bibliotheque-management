@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { getStats } from "../services/userService";
 
+
 // frontend/src/pages/AdminDashboard.jsx
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ users: 0, books: 0, categories: 0 });
+  const [stats, setStats] = useState({ users: 0, books: 0, categories: 0, addedBooks: [], dashboardData: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -23,6 +24,19 @@ export default function AdminDashboard() {
         }
       });
     return () => (mounted = false);
+  }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get("http://localhost:5000/api/admin/dashboard-stats")
+  //     .then((res) => setStats(res.data))
+  //     .catch((err) => console.error(err));
+  // }, []);
+
+  useEffect(() => {
+    getStats()
+      .then((res) => setStats(res.data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (
@@ -56,10 +70,10 @@ export default function AdminDashboard() {
             </p>
           )}
 
-          {/* OPTIONNEL : badge d’évolution */}
-          {/* <span className="inline-block mt-2 text-sm text-green-600">
+          {/* Badge d’évolution */}
+          <span className="inline-block mt-2 text-sm text-green-600">
             +12% ce mois
-          </span> */}
+          </span>
         </div>
 
         {/* CARD LIVRES */}
@@ -92,6 +106,7 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
     </div>
   );
 }
