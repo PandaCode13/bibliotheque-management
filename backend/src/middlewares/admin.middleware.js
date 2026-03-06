@@ -7,12 +7,14 @@ module.exports = (req, res, next) => {
   });
 
   if (!req.user) {
-    return res.status(403).json({ message: "❌ Utilisateur pas trouvé dans req.user" });
+    return res
+      .status(403)
+      .json({ message: "❌ Utilisateur pas trouvé dans req.user" });
   }
 
   if (req.user.role !== "admin") {
-    return res.status(403).json({ 
-      message: `❌ Accès admin requis. Vous êtes: ${req.user.role}` 
+    return res.status(403).json({
+      message: `❌ Accès admin requis. Vous êtes: ${req.user.role}`,
     });
   }
 

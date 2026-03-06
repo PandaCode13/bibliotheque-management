@@ -8,29 +8,38 @@ exports.getDashboardStats = async (req, res) => {
         $group: {
           _id: {
             year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" }
+            month: { $month: "$createdAt" },
           },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
-      { $sort: { "_id.year": 1, "_id.month": 1 } }
+      { $sort: { "_id.year": 1, "_id.month": 1 } },
     ]);
 
     // Convertir numéro mois → nom
     const monthNames = [
-      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
 
-    const formatted = monthlyBooks.map(item => ({
+    const formatted = monthlyBooks.map((item) => ({
       month: monthNames[item._id.month - 1],
-      count: item.count
+      count: item.count,
     }));
 
     res.json({
-      monthlyBooks: formatted
+      monthlyBooks: formatted,
     });
-
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -45,40 +54,41 @@ exports.getDashboardStats = async (req, res) => {
     // Nombre total d'utilisateurs, livres, catégories
     const users = await require("../models/user.model").countDocuments();
     const books = await require("../models/book.model").countDocuments();
-    const categories = await require("../models/category.model").countDocuments();
+    const categories =
+      await require("../models/category.model").countDocuments();
 
     // Livres par catégorie
     const addedBooks = await require("../models/book.model").aggregate([
       {
         $group: {
           _id: "$category",
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
         $lookup: {
           from: "categories",
           localField: "_id",
           foreignField: "_id",
-          as: "categoryInfo"
-        }
+          as: "categoryInfo",
+        },
       },
       {
-        $unwind: "$categoryInfo"
+        $unwind: "$categoryInfo",
       },
       {
         $project: {
           category: "$categoryInfo.name",
-          count: 1
-        }
-      }
+          count: 1,
+        },
+      },
     ]);
 
     res.json({
       users,
       books,
       categories,
-      addedBooks
+      addedBooks,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

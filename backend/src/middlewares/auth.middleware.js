@@ -15,14 +15,18 @@ module.exports = async (req, res, next) => {
     console.log("✅ TOKEN DÉCODÉ:", { id: decoded.id, role: decoded.role });
 
     const user = await User.findById(decoded.id).select(
-      "-password -resetPasswordToken -resetPasswordExpires"
+      "-password -resetPasswordToken -resetPasswordExpires",
     );
 
     if (!user) {
       return res.status(401).json({ message: "Utilisateur non trouvé" });
     }
 
-    console.log("✅ UTILISATEUR TROUVÉ:", { id: user._id, role: user.role, email: user.email });
+    console.log("✅ UTILISATEUR TROUVÉ:", {
+      id: user._id,
+      role: user.role,
+      email: user.email,
+    });
 
     // Vérifier si le compte est actif (sauf pour les admins)
     if (!user.isActive && user.role !== "admin") {

@@ -2,13 +2,17 @@ import { useEffect, useState } from "react";
 import { getStats } from "../services/userService";
 import { Link } from "react-router-dom";
 
-
 // frontend/src/pages/AdminDashboard.jsx
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({ users: 0, books: 0, categories: 0, addedBooks: [], dashboardData: [] });
+  const [stats, setStats] = useState({
+    users: 0,
+    books: 0,
+    categories: 0,
+    addedBooks: [],
+    dashboardData: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
 
   useEffect(() => {
     getStats()
@@ -53,7 +57,10 @@ export default function AdminDashboard() {
             </p>
           )}
           {/* OPTIONNEL : lien rapide */}
-          <Link to="/dashboard/admin/users" className="mt-4 text-sm text-[#0F4C5C] hover:underline">
+          <Link
+            to="/dashboard/admin/users"
+            className="mt-4 text-sm text-[#0F4C5C] hover:underline"
+          >
             Gérer les utilisateurs →
           </Link>
         </div>
@@ -71,7 +78,10 @@ export default function AdminDashboard() {
           )}
 
           {/* OPTIONNEL : lien rapide */}
-          <Link to="/dashboard/admin/books" className="mt-4 text-sm text-[#0F4C5C] hover:underline">
+          <Link
+            to="/dashboard/admin/books"
+            className="mt-4 text-sm text-[#0F4C5C] hover:underline"
+          >
             Voir tous les livres →
           </Link>
         </div>
@@ -88,7 +98,6 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
-
     </div>
   );
 }

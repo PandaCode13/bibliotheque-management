@@ -83,7 +83,7 @@ exports.updateUserRole = async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.params.id,
     { role },
-    { new: true }
+    { new: true },
   ).select("-password");
 
   res.json(user);
@@ -108,11 +108,11 @@ exports.toggleUserStatus = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    
+
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé" });
     }
-    
+
     res.json({ message: "Utilisateur supprimé avec succès" });
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur", error: error.message });
@@ -123,9 +123,7 @@ exports.toggleFavorite = async (req, res) => {
   const user = await User.findById(req.user.id);
   const bookId = req.params.id;
 
-  const index = user.favoriteBooks.findIndex(
-    (b) => b.toString() === bookId
-  );
+  const index = user.favoriteBooks.findIndex((b) => b.toString() === bookId);
 
   let isFavorite;
 
@@ -142,8 +140,7 @@ exports.toggleFavorite = async (req, res) => {
 };
 
 exports.getFavorites = async (req, res) => {
-  const user = await User.findById(req.user.id)
-    .populate("favoriteBooks");
+  const user = await User.findById(req.user.id).populate("favoriteBooks");
 
   res.json(user.favoriteBooks);
 };

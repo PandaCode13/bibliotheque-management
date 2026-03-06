@@ -124,7 +124,7 @@ export default function Catalog() {
                   <img
                     src={
                       b.coverImage ||
-                      "https://via.placeholder.com/300x400?text=Livre"
+                      "/placeholder-book.svg"
                     }
                     alt={b.title}
                     className="h-60 w-full object-cover"
@@ -139,7 +139,16 @@ export default function Catalog() {
                       {b.authors?.join(", ") || "Auteur inconnu"}
                     </p>
 
-                    {/* Pas de lien pour voir les détails des livres ni meme consultez les livres */}
+                    <div className="pt-2">
+                      <Link
+                        to={`/book/${b._id}`}
+                        className="inline-block w-full text-center bg-[#0F4C5C] 
+                     text-white py-2 rounded-lg 
+                     hover:bg-[#0C3A45] transition"
+                      >
+                        Voir les détails
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}

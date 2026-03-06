@@ -1,22 +1,18 @@
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/user.model");
 
 const generateToken = (user) =>
-  jwt.sign(
-    { id: user._id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
-  );
+  jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 
 exports.register = async (req, res) => {
   const { firstName, lastName, email, password, role } = req.body;
 
   const exists = await User.findOne({ email });
-  if (exists)
-    return res.status(400).json({ message: "Utilisateur existant" });
+  if (exists) return res.status(400).json({ message: "Utilisateur existant" });
 
   const hashed = await bcrypt.hash(password, 10);
 
@@ -35,8 +31,7 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
-  if (!user)
-    return res.status(401).json({ message: "Identifiants invalides" });
+  if (!user) return res.status(401).json({ message: "Identifiants invalides" });
 
   const match = await bcrypt.compare(password, user.password);
   if (!match)
@@ -57,7 +52,6 @@ exports.login = async (req, res) => {
     },
   });
 };
-
 
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -93,10 +87,12 @@ exports.forgotPassword = async (req, res) => {
         <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le lien ci-dessous pour choisir un nouveau mot de passe :</p>
         <p><a href="${resetLink}">${resetLink}</a></p>
         <p>Ce lien est valable 15 minutes.</p>
-        <p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`
+        <p>Si vous n'êtes pas à l'origine de cette demande, ignorez cet email.</p>`,
     });
   } catch (err) {
-    return res.status(500).json({ message: "Erreur lors de l'envoi de l'email." });
+    return res
+      .status(500)
+      .json({ message: "Erreur lors de l'envoi de l'email." });
   }
 
   res.json({ message: "Si cet email existe, un lien a été envoyé." });
@@ -135,10 +131,7 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   const { token, password } = req.body;
 
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.findOne({
     resetPasswordToken: hashedToken,

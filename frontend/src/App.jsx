@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Catalog from "./pages/Catalog";
 import BookDetails from "./pages/BookDetails";
+import PublicBookDetail from "./pages/PublicBookDetail";
 
 // USER
 import UserDashboard from "./pages/UserDashboard";
@@ -50,7 +51,7 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/catalog" element={<Catalog/>}/>
-        <Route path="/books/:id" element={<BookDetails />} />
+        <Route path="/book/:id" element={<PublicBookDetail />} />
 
         {/* USER */}
         <Route

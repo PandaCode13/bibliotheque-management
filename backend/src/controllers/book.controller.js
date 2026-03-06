@@ -2,31 +2,86 @@ const Book = require("../models/book.model");
 const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
 const fs = require("fs");
+const path = require("path");
 const csv = require("csv-parser");
 const mongoose = require("mongoose");
+
+const uploadsRoot = path.join(__dirname, "../../uploads");
+
+const toPublicUploadPath = (file, folder) => {
+  if (!file?.filename) return undefined;
+  return `uploads/${folder}/${file.filename}`.replace(/\\/g, "/");
+};
+
+const toAbsoluteUploadPath = (storedPath) => {
+  if (!storedPath) return null;
+  if (path.isAbsolute(storedPath)) return storedPath;
+  const normalized = storedPath.replace(/^uploads[\\/]/, "");
+  return path.join(uploadsRoot, normalized);
+};
+
+const normalizeBookPayload = (payload) => {
+  const data = { ...payload };
+
+  if (typeof data.isbn === "string" && data.isbn.trim() === "") {
+    data.isbn = undefined;
+  }
+
+  if (typeof data.category === "string" && data.category.trim() === "") {
+    data.category = undefined;
+  }
+
+  if (typeof data.publishedDate === "string" && data.publishedDate.trim() === "") {
+    data.publishedDate = undefined;
+  }
+
+  return data;
+};
 
 /* =========================
    CREATE BOOK
 ========================= */
 const createBook = async (req, res) => {
   try {
-    const data = { ...req.body };
+    const data = normalizeBookPayload(req.body);
 
-    // Parse authors (FormData → string JSON)
+    // Convert authors string -> array
     if (req.body.authors) {
       data.authors = JSON.parse(req.body.authors);
     }
 
-    // Handle cover image
-    if (req.file) {
-      data.coverImage = req.file.path;
+    // Upload cover
+    if (req.files && req.files.cover) {
+      data.coverImage = toPublicUploadPath(req.files.cover[0], "covers");
+    }
+
+    // Upload PDF
+    if (req.files && req.files.pdfBook) {
+      data.pdfBook = toPublicUploadPath(req.files.pdfBook[0], "books");
     }
 
     const book = await Book.create(data);
+
     const populatedBook = await Book.findById(book._id).populate("category");
 
     res.status(201).json(populatedBook);
+
   } catch (error) {
+    console.error("CREATE BOOK ERROR:", error);
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "ISBN deja utilise",
+        error: error.message,
+      });
+    }
+
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      return res.status(400).json({
+        message: "Donnees invalides pour la creation du livre",
+        error: error.message,
+      });
+    }
+
     res.status(500).json({
       message: "Erreur lors de la création du livre",
       error: error.message,
@@ -39,28 +94,66 @@ const createBook = async (req, res) => {
 ========================= */
 const updateBook = async (req, res) => {
   try {
-    const data = { ...req.body };
+    const data = normalizeBookPayload(req.body);
 
     if (req.body.authors) {
       data.authors = JSON.parse(req.body.authors);
     }
 
-    if (req.file) {
-      data.coverImage = req.file.path;
+    const existingBook = await Book.findById(req.params.id);
+
+    if (!existingBook) {
+      return res.status(404).json({ message: "Livre introuvable" });
     }
 
-    const book = await Book.findByIdAndUpdate(
+    // Nouvelle cover
+    if (req.files && req.files.cover) {
+
+      // supprimer ancienne cover
+      const oldCoverPath = toAbsoluteUploadPath(existingBook.coverImage);
+      if (oldCoverPath && fs.existsSync(oldCoverPath)) {
+        fs.unlinkSync(oldCoverPath);
+      }
+
+      data.coverImage = toPublicUploadPath(req.files.cover[0], "covers");
+    }
+
+    // Nouveau PDF
+    if (req.files && req.files.pdfBook) {
+
+      // supprimer ancien pdf
+      const oldPdfPath = toAbsoluteUploadPath(existingBook.pdfBook);
+      if (oldPdfPath && fs.existsSync(oldPdfPath)) {
+        fs.unlinkSync(oldPdfPath);
+      }
+
+      data.pdfBook = toPublicUploadPath(req.files.pdfBook[0], "books");
+    }
+
+    const updatedBook = await Book.findByIdAndUpdate(
       req.params.id,
       data,
       { new: true }
     ).populate("category");
 
-    if (!book) {
-      return res.status(404).json({ message: "Livre introuvable" });
+    res.json(updatedBook);
+
+  } catch (error) {
+    console.error("UPDATE BOOK ERROR:", error);
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "ISBN deja utilise",
+        error: error.message,
+      });
     }
 
-    res.json(book);
-  } catch (error) {
+    if (error.name === "ValidationError" || error.name === "CastError") {
+      return res.status(400).json({
+        message: "Donnees invalides pour la modification du livre",
+        error: error.message,
+      });
+    }
+
     res.status(500).json({
       message: "Erreur lors de la modification du livre",
       error: error.message,
@@ -80,8 +173,9 @@ const deleteBook = async (req, res) => {
     }
 
     // Supprimer image si existante
-    if (book.coverImage && fs.existsSync(book.coverImage)) {
-      fs.unlinkSync(book.coverImage);
+    const oldCoverPath = toAbsoluteUploadPath(book.coverImage);
+    if (oldCoverPath && fs.existsSync(oldCoverPath)) {
+      fs.unlinkSync(oldCoverPath);
     }
 
     res.json({ message: "Livre supprimé avec succès" });
@@ -192,7 +286,7 @@ const likeBook = async (req, res) => {
   if (!book) return res.status(404).json({ message: "Livre introuvable" });
 
   const existingVote = user.votes.find(
-    (v) => v.book.toString() === book._id.toString()
+    (v) => v.book.toString() === book._id.toString(),
   );
 
   if (existingVote?.value === 1)
@@ -219,7 +313,7 @@ const dislikeBook = async (req, res) => {
   if (!book) return res.status(404).json({ message: "Livre introuvable" });
 
   const existingVote = user.votes.find(
-    (v) => v.book.toString() === book._id.toString()
+    (v) => v.book.toString() === book._id.toString(),
   );
 
   if (existingVote?.value === -1)
@@ -276,7 +370,6 @@ const importBooksFromCSV = async (req, res) => {
       .on("end", async () => {
         try {
           for (const row of results) {
-
             // 🔥 FIX COVER IMAGE
             let coverImage = row.coverImage;
 
@@ -310,7 +403,6 @@ const importBooksFromCSV = async (req, res) => {
           res.json({
             message: `${results.length} livres importés avec succès`,
           });
-
         } catch (err) {
           res.status(500).json({
             message: "Erreur insertion livres",
@@ -318,7 +410,6 @@ const importBooksFromCSV = async (req, res) => {
           });
         }
       });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur import CSV",
@@ -342,5 +433,5 @@ module.exports = {
   dislikeBook,
   addComment,
   getCommentsByBook,
-  importBooksFromCSV
+  importBooksFromCSV,
 };

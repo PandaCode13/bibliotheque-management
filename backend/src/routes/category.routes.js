@@ -12,41 +12,20 @@ const isAdmin = require("../middlewares/admin.middleware");
 // Récupérer les catégories pour le catalogue
 router.get("/public", controller.getPublicCategories);
 
-
 /* =========================
    ROUTES ADMIN
 ========================= */
 
 // Récupérer toutes les catégories (admin)
-router.get(
-  "/",
-  auth,
-  isAdmin,
-  controller.getAllCategories
-);
+router.get("/", auth, isAdmin, controller.getAllCategories);
 
 // Créer une catégorie
-router.post(
-  "/",
-  auth,
-  isAdmin,
-  controller.createCategory
-);
+router.post("/", auth, isAdmin, controller.createCategory);
 
 // Modifier une catégorie
-router.put(
-  "/:id",
-  auth,
-  isAdmin,
-  controller.updateCategory
-);
+router.put("/:id", auth, isAdmin, controller.updateCategory);
 
 // Supprimer une catégorie
-router.delete(
-  "/:id",
-  auth,
-  isAdmin,
-  controller.deleteCategory
-);
+router.delete("/:id", auth, isAdmin, controller.deleteCategory);
 
 module.exports = router;

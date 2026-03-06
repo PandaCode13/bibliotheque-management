@@ -44,18 +44,14 @@ export default function Home() {
       {/* LIVRES */}
       <section className="container mx-auto px-6 py-16 flex-1">
         <div className="mb-10 text-center">
-          <h2 className="text-3xl font-bold text-[#0F4C5C]">
-            Nouveautés
-          </h2>
+          <h2 className="text-3xl font-bold text-[#0F4C5C]">Nouveautés</h2>
           <p className="text-sm text-gray-500 mt-2">
             Une sélection pour nourrir votre curiosité
           </p>
         </div>
 
         {loading && (
-          <p className="text-gray-500 text-center">
-            Chargement des livres...
-          </p>
+          <p className="text-gray-500 text-center">Chargement des livres...</p>
         )}
 
         {!loading && books.length === 0 && (
@@ -70,7 +66,7 @@ export default function Home() {
               key={book._id}
               className="bg-white rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition overflow-hidden"
             >
-            <BookCover src={book.coverImage} title={book.title} />
+              <BookCover src={book.coverImage} title={book.title} />
               <div className="p-4">
                 <h3 className="font-semibold text-sm text-[#0F4C5C] truncate">
                   {book.title}
@@ -78,6 +74,12 @@ export default function Home() {
                 <p className="text-xs text-gray-500 truncate mt-1">
                   {book.authors?.join(", ") || "Auteur inconnu"}
                 </p>
+                <Link
+                  to={`/book/${book._id}`}
+                  className="text-[#9DBEBB] hover:underline text-xs"
+                >
+                  Voir les détails
+                </Link>
               </div>
             </div>
           ))}

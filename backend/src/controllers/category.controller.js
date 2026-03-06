@@ -93,7 +93,7 @@ exports.updateCategory = async (req, res) => {
         description: description || null,
         parent: parent || null,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!category) {

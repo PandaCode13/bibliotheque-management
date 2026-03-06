@@ -12,12 +12,7 @@ const bookSchema = new mongoose.Schema(
 
     coverImage: { type: String },
 
-    fileUrl: { type: String },
-
-    fileType: {
-      type: String,
-      enum: ["pdf", "epub"],
-    },
+    pdfBook: { type: String },
 
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -46,12 +41,10 @@ const bookSchema = new mongoose.Schema(
     visible: { type: Boolean, default: true },
 
     createdAt: { type: Date, default: Date.now },
-    
+
     updatedAt: { type: Date, default: Date.now },
-    
   },
   { timestamps: true },
-  
 );
 
 module.exports = mongoose.model("Book", bookSchema);

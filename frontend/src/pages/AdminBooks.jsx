@@ -24,8 +24,7 @@ export default function AdminBooks() {
     category: "",
     language: "",
     publisher: "",
-    pdfBook: "",
-    fileType: "",
+    pdfBook: null,
     publishedDate: "",
     resume: "",
   });
@@ -96,7 +95,14 @@ export default function AdminBooks() {
         "authors",
         JSON.stringify(formData.authors.split(",").map((a) => a.trim())),
       );
-      bookData.append("pdfBook", formData.pdfBook);
+
+      if (formData.pdfBook) {
+        bookData.append("pdfBook", formData.pdfBook);
+      }
+
+      if (cover) {
+        bookData.append("cover", cover);
+      }
 
       if (cover) {
         bookData.append("cover", cover);
@@ -265,31 +271,34 @@ export default function AdminBooks() {
                 type="text"
                 name="title"
                 placeholder="Titre"
-                value={formData.title}
+                value={formData.title || ""}
                 onChange={handleFormChange}
                 required
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
+
               <input
                 type="text"
                 name="authors"
                 placeholder="Auteurs (séparés par ,)"
-                value={formData.authors}
+                value={formData.authors || ""}
                 onChange={handleFormChange}
                 required
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
+
               <input
                 type="text"
                 name="isbn"
                 placeholder="ISBN"
-                value={formData.isbn}
+                value={formData.isbn || ""}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
+
               <select
                 name="category"
-                value={formData.category}
+                value={formData.category || ""}
                 onChange={handleFormChange}
                 required
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
@@ -301,68 +310,57 @@ export default function AdminBooks() {
                   </option>
                 ))}
               </select>
+
               <input
                 type="text"
                 name="language"
                 placeholder="Langue"
-                value={formData.language}
+                value={formData.language || ""}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
+
               <input
                 type="text"
                 name="publisher"
                 placeholder="Éditeur"
-                value={formData.publisher}
+                value={formData.publisher || ""}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleCoverChange}
-                className="px-4 py-2 border rounded-lg"
-              />
-              <input
-                type="text"
-                placeholder="Ou coller une URL d'image"
-                value={coverUrl}
-                onChange={(e) => setCoverUrl(e.target.value)}
-                className="px-4 py-2 border rounded-lg"
-              />
-              {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="w-24 h-32 object-cover rounded mt-2"
+
+              <div id="coverImage">
+                <label htmlFor="">Couverture de l'image</label>
+
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverChange}
+                  placeholder="Couverture du livre"
+                  className="px-4 py-2 border rounded-lg"
                 />
-              )}
+              </div>
 
-              <input
-                type="text"
-                name="pdfBook"
-                id="pdfBook"
-                placeholder="URL du PDF"
-                value={formData.pdfBook}
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
+              <div id="pdfBool">
+                <label htmlFor="">Insérer le pdf du livre</label>
 
-              <input
-                type="text"
-                name="fileType"
-                placeholder="Type de fichier (pdf ou epub)"
-                value={formData.fileType}
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
+                <input
+                  type="file"
+                  name="pdfBook"
+                  accept=".pdf,.epub"
+                  onChange={(e) =>
+                    setFormData({ ...formData, pdfBook: e.target.files[0] })
+                  }
+                  className="px-4 py-2 border rounded-lg"
+                />
+              </div>
 
               <input
                 type="text"
                 name="publishedDate"
                 id="publishedDate"
                 placeholder="Date de publication (YYYY-MM-DD)"
-                value={formData.publishedDate}
+                value={formData.publishedDate || ""}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
@@ -371,7 +369,7 @@ export default function AdminBooks() {
                 type="text"
                 name="resume"
                 placeholder="Résumé"
-                value={formData.resume}
+                value={formData.resume || ""}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
@@ -383,6 +381,7 @@ export default function AdminBooks() {
                 >
                   {editingBook ? "Modifier" : "Créer"}
                 </button>
+
                 <button
                   type="button"
                   onClick={() => {
@@ -471,7 +470,10 @@ export default function AdminBooks() {
                     Supprimer
                   </button>
 
-                  <button onClick={() => toggleBookVisibility(book._id, book.visible)} className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700">
+                  <button
+                    onClick={() => toggleBookVisibility(book._id, book.visible)}
+                    className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
                     Afficher/Désafficher
                   </button>
                 </td>

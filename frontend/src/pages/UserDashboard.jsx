@@ -78,7 +78,7 @@ export default function UserDashboard() {
                               src={
                                 book.coverImage && book.coverImage.trim() !== ""
                                   ? book.coverImage
-                                  : "https://via.placeholder.com/300x400?text=Livre"
+                                  : "/placeholder-book.svg"
                               }
                               alt={book.title}
                               className="h-60 w-full object-cover bg-gray-100"

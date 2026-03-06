@@ -12,11 +12,9 @@ router.get("/me", auth, (req, res) => {
 
 router.put("/me", auth, async (req, res) => {
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      req.body,
-      { new: true }
-    ).select("-password");
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, req.body, {
+      new: true,
+    }).select("-password");
     res.json(updatedUser);
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur" });

@@ -18,20 +18,16 @@ const userSchema = new mongoose.Schema(
 
     isActive: { type: Boolean, default: true },
 
-    favoriteBooks: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
-    ],
+    favoriteBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
 
-    wishlist: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
-    ],
+    wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
 
     votes: [
       {
         book: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Book",
-      },
+        },
         value: {
           type: Number,
           enum: [1, -1], // 1 = like, -1 = dislike
@@ -42,7 +38,7 @@ const userSchema = new mongoose.Schema(
     resetPasswordExpires: { type: Date },
   },
 
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("User", userSchema);

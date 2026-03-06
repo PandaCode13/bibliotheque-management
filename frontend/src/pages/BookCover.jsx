@@ -1,5 +1,5 @@
 export default function BookCover({ src, title }) {
-  const fallback = "https://via.placeholder.com/200x300?text=Pas+d%27image";
+  const fallback = "/placeholder-book.svg";
 
   return (
     <img

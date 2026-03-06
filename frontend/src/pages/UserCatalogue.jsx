@@ -13,52 +13,47 @@ export default function Catalog() {
   });
   const [loading, setLoading] = useState(false);
 
-const load = async () => {
-  const params = {};
+  const load = async () => {
+    const params = {};
 
-  if (filters.q.trim() !== "") params.q = filters.q.trim();
-  if (filters.category) params.category = filters.category;
-  if (filters.language.trim() !== "") params.language = filters.language.trim();
+    if (filters.q.trim() !== "") params.q = filters.q.trim();
+    if (filters.category) params.category = filters.category;
+    if (filters.language.trim() !== "")
+      params.language = filters.language.trim();
 
-  const res = await getPublicBooks(params);
-  setBooks(res.data);
-};
+    const res = await getPublicBooks(params);
+    setBooks(res.data);
+  };
 
-// un useEffect pour les catégories
-useEffect(() => {
-  getPublicCategories()
-    .then((res) => {
-      setCategories(res.data);
-    })
-    .catch((err) => {
-      console.error("Erreur chargement catégories", err);
-    });
-}, []);
+  // un useEffect pour les catégories
+  useEffect(() => {
+    getPublicCategories()
+      .then((res) => {
+        setCategories(res.data);
+      })
+      .catch((err) => {
+        console.error("Erreur chargement catégories", err);
+      });
+  }, []);
 
-
-// un useEffect pour afficher les livres
-useEffect(() => {
-  load();
-}, []);
-
-useEffect(() => {
-  const delayDebounce = setTimeout(() => {
+  // un useEffect pour afficher les livres
+  useEffect(() => {
     load();
-  }
-  , 500); // délai de 500ms après la dernière frappe
-  return () => clearTimeout(delayDebounce); // nettoyer le timeout si les filtres changent avant le délai
-}, [filters.q, filters.category, filters.language]);
+  }, []);
 
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      load();
+    }, 500); // délai de 500ms après la dernière frappe
+    return () => clearTimeout(delayDebounce); // nettoyer le timeout si les filtres changent avant le délai
+  }, [filters.q, filters.category, filters.language]);
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-12">
-
         {/* HEADER */}
         <header>
-          <h1 className="text-3xl font-bold text-[#0F4C5C]">
-            Catalogue
-          </h1>
+          <h1 className="text-3xl font-bold text-[#0F4C5C]">Catalogue</h1>
           <p className="text-gray-600 mt-2">
             Explorez notre collection de livres
           </p>
@@ -67,14 +62,11 @@ useEffect(() => {
         {/* FILTRES */}
         <section className="bg-white rounded-2xl shadow-sm p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
             <input
               type="text"
               placeholder="Titre, auteur ou ISBN"
               value={filters.q}
-              onChange={(e) =>
-                setFilters({ ...filters, q: e.target.value })
-              }
+              onChange={(e) => setFilters({ ...filters, q: e.target.value })}
               className="h-[52px] px-4 border border-gray-300 rounded-lg 
                          focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
             />
@@ -97,10 +89,10 @@ useEffect(() => {
             </select>
 
             <select
-                value={filters.language}
-                onChange={(e) =>
-                  setFilters({ ...filters, language: e.target.value })
-                }
+              value={filters.language}
+              onChange={(e) =>
+                setFilters({ ...filters, language: e.target.value })
+              }
               className="h-[52px] px-4 border border-gray-300 rounded-lg bg-white
                         focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
             >
@@ -114,7 +106,6 @@ useEffect(() => {
               <option value="somali">Somali</option>
             </select>
 
-
             <button
               onClick={load}
               className="h-[52px] bg-[#0F4C5C] text-[#FAFAF9] 
@@ -123,7 +114,6 @@ useEffect(() => {
             >
               Filtrer
             </button>
-
           </div>
         </section>
 
@@ -143,19 +133,21 @@ useEffect(() => {
                              transition overflow-hidden"
                 >
                   <img
-                    src={ b.coverImage
-                          ? b.coverImage.startsWith("http")
+                    src={
+                      b.coverImage
+                        ? b.coverImage.startsWith("http")
                           ? b.coverImage
                           : `http://localhost:5000/${b.coverImage}`
-                          : "https://via.placeholder.com/300x400?text=Livre"
-                        }
+                        : "/placeholder-book.svg"
+                    }
                     alt={b.title}
                     className="h-60 w-full object-cover"
                     onError={(e) => {
-                              e.target.src = "https://via.placeholder.com/300x400?text=Livre";
-                            }}
-                    />
-                    
+                      e.target.src =
+                        "/placeholder-book.svg";
+                    }}
+                  />
+
                   <div className="p-4 space-y-2">
                     <h3 className="font-semibold text-[#0F4C5C] truncate">
                       {b.title}
@@ -178,7 +170,6 @@ useEffect(() => {
             </div>
           )}
         </section>
-
       </div>
     </div>
   );
