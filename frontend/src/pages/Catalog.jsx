@@ -17,11 +17,13 @@ export default function Catalog() {
   const load = async () => {
     try {
       const params = {};
+
       if (filters.q.trim()) params.q = filters.q.trim();
       if (filters.category) params.category = filters.category;
       if (filters.language.trim()) params.language = filters.language.trim();
 
       const res = await getPublicBooks(params);
+
       setBooks(res.data);
     } catch (error) {
       console.error("Erreur recherche:", error);
@@ -33,8 +35,8 @@ export default function Catalog() {
       try {
         const res = await getPublicCategories();
         setCategories(res.data);
-      } catch (error) {
-        console.error("Erreur chargement catégories:", error);
+      } catch (err) {
+        console.error(err);
       }
     };
 
@@ -47,50 +49,28 @@ export default function Catalog() {
 
     debounceTimer.current = setTimeout(() => {
       load();
-    }, 500);
+    }, 400);
+
+    return () => clearTimeout(debounceTimer.current);
   }, [filters]);
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9]">
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-10">
-
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <div className="max-w-7xl mx-auto px-6 py-10 space-y-10">
         {/* HEADER */}
-        <header className="text-center sm:text-left">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#0F4C5C]">
-            Catalogue
-          </h1>
-
-          <p className="text-gray-600 mt-2 text-sm sm:text-base">
-            Explorez notre collection de livres
-          </p>
-        </header>
+        <div>
+          <h1 className="text-3xl font-bold text-[#0F4C5C]">Catalogue</h1>
+          <p className="text-gray-500">Découvrez tous nos livres disponibles</p>
+        </div>
 
         {/* FILTRES */}
-        <section
-          className="
-          bg-white rounded-xl shadow-sm
-          p-4 sm:p-6
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          lg:grid-cols-4
-          gap-4
-        "
-        >
-
+        <div className="bg-white shadow-md rounded-xl p-6 grid md:grid-cols-3 gap-4">
           <input
             type="text"
-            placeholder="Titre, auteur ou ISBN"
+            placeholder="🔎 Rechercher un livre..."
             value={filters.q}
-            onChange={(e) =>
-              setFilters({ ...filters, q: e.target.value })
-            }
-            className="
-            w-full h-[48px] sm:h-[52px]
-            px-4 border border-gray-300 rounded-lg
-            focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]
-          "
+            onChange={(e) => setFilters({ ...filters, q: e.target.value })}
+            className="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-[#9DBEBB]"
           />
 
           <select
@@ -98,11 +78,7 @@ export default function Catalog() {
             onChange={(e) =>
               setFilters({ ...filters, category: e.target.value })
             }
-            className="
-            w-full h-[48px] sm:h-[52px]
-            px-4 border border-gray-300 rounded-lg bg-white
-            focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]
-          "
+            className="border border-gray-300 rounded-lg px-4 py-2"
           >
             <option value="">Toutes les catégories</option>
 
@@ -118,11 +94,7 @@ export default function Catalog() {
             onChange={(e) =>
               setFilters({ ...filters, language: e.target.value })
             }
-            className="
-            w-full h-[48px] sm:h-[52px]
-            px-4 border border-gray-300 rounded-lg bg-white
-            focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]
-          "
+            className="border border-gray-300 rounded-lg px-4 py-2"
           >
             <option value="">Toutes les langues</option>
             <option value="français">Français</option>
@@ -130,88 +102,57 @@ export default function Catalog() {
             <option value="arabe">Arabe</option>
             <option value="allemand">Allemand</option>
             <option value="espagnol">Espagnol</option>
-            <option value="afar">Afar</option>
-            <option value="somali">Somali</option>
           </select>
+        </div>
 
-        </section>
+        {/* RESULTATS */}
 
-        {/* LIVRES */}
-        <section>
+        {books.length === 0 ? (
+          <div className="text-center text-gray-500 bg-white rounded-xl p-10 shadow">
+            Aucun livre trouvé.
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            {books.map((b) => {
+              const cover = b.coverImage
+                ? b.coverImage.startsWith("http")
+                  ? b.coverImage
+                  : `http://localhost:5000/${b.coverImage}`
+                : "/placeholder-book.svg";
 
-          {books.length === 0 ? (
-            <div className="bg-white rounded-xl p-8 sm:p-10 text-center text-gray-500 shadow-sm">
-              Aucun livre trouvé.
-            </div>
-          ) : (
-
-            <div
-              className="
-              grid
-              grid-cols-1
-              sm:grid-cols-2
-              md:grid-cols-3
-              lg:grid-cols-4
-              xl:grid-cols-5
-              gap-6 sm:gap-8
-            "
-            >
-
-              {books.map((b) => (
-
+              return (
                 <div
                   key={b._id}
-                  className="
-                  bg-white rounded-xl shadow-sm
-                  hover:shadow-lg hover:-translate-y-1
-                  transition duration-300
-                  overflow-hidden
-                "
+                  className="bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden group"
                 >
-
                   <img
-                    src={b.coverImage || "/placeholder-book.svg"}
+                    src={cover}
                     alt={b.title}
-                    className="h-56 sm:h-60 w-full object-cover"
+                    className="h-64 w-full object-cover group-hover:scale-105 transition duration-300"
                   />
 
-                  <div className="p-4 space-y-2">
-
-                    <h3 className="font-semibold text-[#0F4C5C] text-sm sm:text-base truncate">
+                  <div className="p-4 space-y-3">
+                    <h3 className="font-semibold text-[#0F4C5C] line-clamp-2">
                       {b.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-gray-500 truncate">
+                    <p className="text-sm text-gray-500 line-clamp-1">
                       {b.authors?.join(", ") || "Auteur inconnu"}
                     </p>
 
                     <Link
-                      to={`/book/${b._id}`}
-                      className="
-                      block text-center
-                      bg-[#0F4C5C] text-white
-                      py-2 rounded-lg
-                      hover:bg-[#0C3A45]
-                      transition
-                      text-sm
-                    "
+                      to={`/books/${b._id}`}
+                      className="block text-center bg-[#0F4C5C] text-white py-2 rounded-lg hover:bg-[#0c3c49]"
                     >
-                      Voir les détails
+                      Voir le livre
                     </Link>
-
                   </div>
-
                 </div>
-
-              ))}
-
-            </div>
-          )}
-
-        </section>
-
+              );
+            })}
+          </div>
+        )}
       </div>
-
     </div>
   );
 }

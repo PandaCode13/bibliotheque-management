@@ -28,6 +28,7 @@ export default function AdminBooks() {
     pdfBook: null,
     publishedDate: "",
     resume: "",
+    tags: ""
   });
   const [preview, setPreview] = useState(null);
   const [cover, setCover] = useState(null);
@@ -37,10 +38,14 @@ export default function AdminBooks() {
 
   var fileTypes = ["application/pdf", "application/epub+zip"];
 
-  var fileTypes = ["application/pdf", "application/epub+zip"];
-
   function validFileType(file) {
     return fileTypes.includes(file.type);
+  }
+
+  var imageTypes = ["image/png", "image/jpg", "image/jpeg"];
+
+  function validImgaeType(image) {
+    return imageTypes.includes(image.type);
   }
 
   /* ======================
@@ -126,6 +131,7 @@ export default function AdminBooks() {
 
     bookData.append("publishedDate", formData.publishedDate);
     bookData.append("resume", formData.resume);
+    bookData.append("tags", formData.tags);
 
     for (var value of bookData.values()) {
       console.log(value);
@@ -153,6 +159,7 @@ export default function AdminBooks() {
       pdfBook: null,
       publishedDate: "",
       resume: "",
+      tags: "",
     });
 
     setEditingBook(null);
@@ -173,6 +180,9 @@ export default function AdminBooks() {
       language: book.language || "",
       publisher: book.publisher || "",
       pdfBook: book.pdfBook || "",
+      publishedDate: book.publishedDate || "",
+      resume: book.resume || "",
+      tags: book.tags || ""
     });
     setShowForm(true);
   };
@@ -313,6 +323,7 @@ export default function AdminBooks() {
                 name="isbn"
                 placeholder="ISBN"
                 value={formData.isbn || ""}
+                required
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
@@ -335,6 +346,7 @@ export default function AdminBooks() {
               <input
                 type="text"
                 name="language"
+                required
                 placeholder="Langue"
                 value={formData.language || ""}
                 onChange={handleFormChange}
@@ -344,6 +356,7 @@ export default function AdminBooks() {
               <input
                 type="text"
                 name="publisher"
+                required
                 placeholder="Éditeur"
                 value={formData.publisher || ""}
                 onChange={handleFormChange}
@@ -356,6 +369,7 @@ export default function AdminBooks() {
                 <input
                   type="file"
                   accept="image/*"
+                  required
                   onChange={handleCoverChange}
                   placeholder="Couverture du livre"
                   className="px-4 py-2 border rounded-lg"
@@ -368,6 +382,7 @@ export default function AdminBooks() {
                 <input
                   type="file"
                   name="pdfBook"
+                  required
                   accept=".pdf,.epub"
                   onChange={(e) =>
                     setFormData({ ...formData, pdfBook: e.target.files[0] })
@@ -377,21 +392,32 @@ export default function AdminBooks() {
               </div>
 
               <input
-                type="text"
+                type="date"
                 name="publishedDate"
                 id="publishedDate"
+                required
                 placeholder="Date de publication (YYYY-MM-DD)"
                 value={formData.publishedDate || ""}
                 onChange={handleFormChange}
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
 
-              <input
+              <textarea
                 type="text"
                 name="resume"
                 placeholder="Résumé"
+                required
                 value={formData.resume || ""}
                 onChange={handleFormChange}
+                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
+              />
+
+              <input type="text" 
+                name="tags"
+                placeholder="Tags ex: PHP, programmation"
+                value={formData.tags || ""}
+                onChange={handleFormChange}
+                required
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
               />
 

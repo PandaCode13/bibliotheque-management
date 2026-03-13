@@ -224,15 +224,8 @@ export default function Catalog() {
                     </div>
 
                     <Link
-                      to={`/books/${b._id}`}
-                      className="
-                    inline-block
-                    text-sm
-                    font-medium
-                    text-[#0F4C5C]
-                    hover:text-[#6FAFB0]
-                    transition
-                  "
+                      to={`/dashboard/user/books/${b._id}`}
+                      className=" inline-block text-sm font-medium text-[#0F4C5C] hover:text-[#6FAFB0] transition"
                     >
                       Voir détails →
                     </Link>

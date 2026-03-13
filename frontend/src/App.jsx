@@ -1,20 +1,23 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
 import "./App.css";
 
+// PUBLIC
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Catalog from "./pages/Catalog";
-import BookDetails from "./pages/BookDetails";
 import PublicBookDetail from "./pages/PublicBookDetail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // USER
 import UserDashboard from "./pages/UserDashboard";
 import UserCatalogue from "./pages/UserCatalogue";
 import UserFavorites from "./pages/UserFavorites";
 import UserProfiles from "./pages/UserProfiles";
+import UserBookDetails from "./pages/UserBookDetails";
 
 // ADMIN
 import AdminDashboard from "./pages/AdminDashboard";
@@ -23,37 +26,36 @@ import AdminBooks from "./pages/AdminBooks";
 import AdminImportBooks from "./pages/AdminImportBooks";
 import AdminGestionUtilisateurs from "./pages/AdminGestionUtilisateurs";
 
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-
-
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Nettoyage du localStorage au démarrage en mode développement
-if (import.meta.env.DEV) {
-  localStorage.clear();
-}
-
 export default function App() {
+  const location = useLocation();
+
+  const hideNavbar =
+    location.pathname.startsWith("/books/") ||
+    location.pathname.startsWith("/dashboard/user/books/");
+
   return (
     <>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
 
       <Routes>
-        
         {/* DEFAULT */}
         <Route path="/" element={<Navigate to="/home" replace />} />
 
         {/* PUBLIC */}
         <Route path="/home" element={<Home />} />
+        <Route path="/catalog" element={<Catalog />} />
+        <Route path="/books/:id" element={<PublicBookDetail />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/catalog" element={<Catalog/>}/>
-        <Route path="/book/:id" element={<PublicBookDetail />} />
 
         {/* USER */}
+
         <Route
           path="/dashboard/user"
           element={
@@ -73,6 +75,15 @@ export default function App() {
         />
 
         <Route
+          path="/dashboard/user/books/:id"
+          element={
+            <ProtectedRoute role="user">
+              <UserBookDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/dashboard/user/favorites"
           element={
             <ProtectedRoute role="user">
@@ -83,14 +94,15 @@ export default function App() {
 
         <Route
           path="/dashboard/user/profiles"
-          element = {
+          element={
             <ProtectedRoute role="user">
-                <UserProfiles />
+              <UserProfiles />
             </ProtectedRoute>
-          } 
+          }
         />
 
         {/* ADMIN */}
+
         <Route
           path="/dashboard/admin"
           element={
@@ -119,6 +131,15 @@ export default function App() {
         />
 
         <Route
+          path="/dashboard/admin/import-books"
+          element={
+            <ProtectedRoute role="admin">
+              <AdminImportBooks />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/dashboard/admin/users"
           element={
             <ProtectedRoute role="admin">
@@ -126,15 +147,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
-        <Route 
-          path = "/dashboard/admin/import-books" 
-          element = {
-            <ProtectedRoute role="admin">
-              <AdminImportBooks />
-            </ProtectedRoute>
-          } 
-          />
       </Routes>
     </>
   );

@@ -10,7 +10,7 @@ const uploadsRoot = path.join(__dirname, "../../uploads");
 
 const toPublicUploadPath = (file, folder) => {
   if (!file?.filename) return undefined;
-  return `uploads/${folder}/${file.filename}`.replace(/\\/g, "/");
+  return `uploads/${folder}/${file.filename}`;
 };
 
 const toAbsoluteUploadPath = (storedPath) => {
@@ -430,7 +430,7 @@ const LastBookAdded = async (req, res) => {
       count: books.length,
       data: books
     });
-
+    
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -158,15 +158,16 @@ export default function AdminDashboard() {
       </div>
 
       {/* DERNIERS LIVRES */}
-      <div className="mt-10 bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-          <h3 className="text-lg font-semibold text-gray-800">
+      {/* DERNIERS LIVRES */}
+      <div className="mt-10">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-semibold text-gray-800">
             Derniers livres ajoutés
           </h3>
 
           <Link
             to="/dashboard/admin/books"
-            className="text-sm text-blue-600 hover:text-blue-800 transition"
+            className="text-sm text-blue-600 hover:text-blue-800"
           >
             Voir tous →
           </Link>
@@ -175,43 +176,70 @@ export default function AdminDashboard() {
         {!stats.addedBooks?.data || stats.addedBooks.data.length === 0 ? (
           <p className="text-gray-400">Aucun livre ajouté récemment</p>
         ) : (
-          <ul className="divide-y divide-gray-100">
-            {stats.addedBooks.data.map((book) => (
-              <li
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {stats.addedBooks?.slice(0, 5).map((book) => (
+              <div
                 key={book._id}
                 className="
-              flex
-              flex-col
-              sm:flex-row
-              sm:items-center
-              sm:justify-between
-              gap-2
-              py-3
-              hover:bg-gray-50
-              px-2
-              rounded
-              transition
-            "
+          bg-white
+          border border-gray-100
+          rounded-xl
+          shadow-sm
+          hover:shadow-lg
+          transition
+          overflow-hidden
+        "
               >
-                <div>
-                  <p className="font-medium text-gray-700">{book.title}</p>
+                {/* IMAGE */}
+                <img
+                  src={
+                    book.coverImage
+                      ? book.coverImage.startsWith("http")
+                        ? book.coverImage
+                        : `http://localhost:5000/${book.coverImage}`
+                      : "/placeholder-book.svg"
+                  }
+                  alt={book.title}
+                  className="h-40 w-full object-cover"
+                />
+
+                {/* INFOS */}
+                <div className="p-4 space-y-2">
+                  <h4 className="text-sm font-semibold text-gray-800 line-clamp-2">
+                    {book.title}
+                  </h4>
+
+                  <p className="text-xs text-gray-500">
+                    {book.authors?.join(", ") || "Auteur inconnu"}
+                  </p>
 
                   {book.category && (
-                    <p className="text-xs text-gray-400">
-                      Catégorie : {book.category.name}
-                    </p>
+                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                      {book.category.name}
+                    </span>
                   )}
-                </div>
 
-                <Link
-                  to={`/dashboard/admin/books/edit/${book._id}`}
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Modifier
-                </Link>
-              </li>
+                  <Link
+                    to={`/dashboard/admin/books/edit/${book._id}`}
+                    className="
+              block
+              text-center
+              text-sm
+              mt-2
+              bg-blue-600
+              text-white
+              py-1.5
+              rounded
+              hover:bg-blue-700
+              transition
+            "
+                  >
+                    Modifier
+                  </Link>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
