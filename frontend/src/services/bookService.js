@@ -35,25 +35,21 @@ export const getPublicBooks = (params = {}) =>
   api.get("/books/public", { params });
 
 // Détail d’un livre
-export const getPublicBookById = (id) =>
-  api.get(`/books/public/${id}`);
+export const getPublicBookById = (id) => api.get(`/books/public/${id}`);
 
 /* =========================
    LIKES / DISLIKES
 ========================= */
 
-export const likeBook = (id) =>
-  api.post(`/books/${id}/like`);
+export const likeBook = (id) => api.post(`/books/${id}/like`);
 
-export const dislikeBook = (id) =>
-  api.post(`/books/${id}/dislike`);
+export const dislikeBook = (id) => api.post(`/books/${id}/dislike`);
 
 /* =========================
    COMMENTS
 ========================= */
 
-export const getCommentsByBook = (id) =>
-  api.get(`/books/${id}/comments`);
+export const getCommentsByBook = (id) => api.get(`/books/${id}/comments`);
 
 export const addComment = (id, text) =>
   api.post(`/books/${id}/comments`, { text });
@@ -72,3 +68,5 @@ export const importBooks = (file) => {
     },
   });
 };
+
+export const LastedBooksAdded = () => api.get("/books/latest");

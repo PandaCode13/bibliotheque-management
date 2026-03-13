@@ -22,7 +22,9 @@ export default function Login() {
       }
     } catch (err) {
       if (err.response && err.response.status === 403) {
-        setError("Ce compte a été désactivé. Veuillez contacter l'administrateur.");
+        setError(
+          "Ce compte a été désactivé. Veuillez contacter l'administrateur.",
+        );
       } else if (err.response && err.response.status === 401) {
         setError("Identifiants invalides.");
       } else {
@@ -32,26 +34,51 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAFAF9] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAFAF9] px-4 sm:px-6 lg:px-8">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white rounded-2xl shadow-md p-8 space-y-6"
+        className="
+      w-full
+      max-w-sm
+      sm:max-w-md
+      md:max-w-lg
+      bg-white
+      rounded-2xl
+      shadow-lg
+      p-6
+      sm:p-8
+      md:p-10
+      space-y-6
+    "
       >
-        <h2 className="text-2xl font-bold text-center text-[#0F4C5C]">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-[#0F4C5C]">
           Connexion
         </h2>
 
         {error && (
-          <div className="text-red-600 text-center font-semibold">{error}</div>
+          <div className="text-red-600 text-center font-semibold text-sm sm:text-base">
+            {error}
+          </div>
         )}
+
         <div className="space-y-4">
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             type="email"
             placeholder="Adresse email"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg 
-                       focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+            className="
+          w-full
+          px-4
+          py-3
+          border border-gray-300
+          rounded-lg
+          text-sm sm:text-base
+          focus:outline-none
+          focus:ring-2
+          focus:ring-[#9DBEBB]
+          transition
+        "
             required
           />
 
@@ -60,24 +87,49 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mot de passe"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg 
-                       focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+            className="
+          w-full
+          px-4
+          py-3
+          border border-gray-300
+          rounded-lg
+          text-sm sm:text-base
+          focus:outline-none
+          focus:ring-2
+          focus:ring-[#9DBEBB]
+          transition
+        "
             required
           />
         </div>
 
         <button
           type="submit"
-          className="w-full py-3 bg-[#0F4C5C] text-[#FAFAF9] rounded-full 
-                     font-semibold hover:bg-[#0C3E4B] transition"
+          className="
+        w-full
+        py-3
+        text-sm sm:text-base
+        bg-[#0F4C5C]
+        text-[#FAFAF9]
+        rounded-full
+        font-semibold
+        hover:bg-[#0C3E4B]
+        transition
+      "
         >
           Se connecter
         </button>
-        <p className="text-sm text-center text-gray-500">
-          <Link to="/forgot-password" className="text-[#0F4C5C] hover:underline" > Mot de passe oublié ? </Link>
+
+        <p className="text-xs sm:text-sm text-center text-gray-500">
+          <Link
+            to="/forgot-password"
+            className="text-[#0F4C5C] hover:underline"
+          >
+            Mot de passe oublié ?
+          </Link>
         </p>
 
-        <p className="text-sm text-center text-gray-600">
+        <p className="text-xs sm:text-sm text-center text-gray-600">
           Vous n’avez pas encore de compte ?{" "}
           <Link
             to="/register"

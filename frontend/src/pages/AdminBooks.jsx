@@ -16,6 +16,7 @@ export default function AdminBooks() {
   const [showForm, setShowForm] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [Messagepdf, setMessagepdf] = useState("erreur de type de fichier");
   const [itemsPerPage, setItemsPerPage] = useState(15);
   const [formData, setFormData] = useState({
     title: "",
@@ -33,6 +34,14 @@ export default function AdminBooks() {
   const [coverUrl, setCoverUrl] = useState("");
   const [publishedDate, setPublishedDate] = useState("");
   const [resume, setResume] = useState("");
+
+  var fileTypes = ["application/pdf", "application/epub+zip"];
+
+  var fileTypes = ["application/pdf", "application/epub+zip"];
+
+  function validFileType(file) {
+    return fileTypes.includes(file.type);
+  }
 
   /* ======================
         LOAD DATA
@@ -83,60 +92,72 @@ export default function AdminBooks() {
     setError("");
     setSuccess("");
 
-    try {
-      const bookData = new FormData();
+    const bookData = new FormData();
 
-      bookData.append("title", formData.title);
-      bookData.append("isbn", formData.isbn);
-      bookData.append("category", formData.category);
-      bookData.append("language", formData.language);
-      bookData.append("publisher", formData.publisher);
-      bookData.append(
-        "authors",
-        JSON.stringify(formData.authors.split(",").map((a) => a.trim())),
-      );
+    bookData.append("title", formData.title);
+    bookData.append("isbn", formData.isbn);
+    bookData.append("category", formData.category);
+    bookData.append("language", formData.language);
+    bookData.append("publisher", formData.publisher);
+    bookData.append(
+      "authors",
+      JSON.stringify(formData.authors.split(",").map((a) => a.trim())),
+    );
 
-      if (formData.pdfBook) {
+    if (cover) {
+      bookData.append("cover", cover);
+    } else if (coverUrl.trim() !== "") {
+      bookData.append("coverImage", coverUrl);
+    }
+
+    if (formData.pdfBook && !validFileType(formData.pdfBook)) {
+      setError("Le fichier doit être un PDF ou EPUB");
+      return;
+    }
+
+    if (formData.pdfBook) {
+      if (!validFileType(formData.pdfBook)) {
+        setMessagepdf("Type de fichier invalide");
+        return;
+      } else {
         bookData.append("pdfBook", formData.pdfBook);
       }
-
-      if (cover) {
-        bookData.append("cover", cover);
-      }
-
-      if (cover) {
-        bookData.append("cover", cover);
-      } else if (coverUrl.trim() !== "") {
-        bookData.append("coverImage", coverUrl);
-      }
-
-      if (editingBook) {
-        // Modification
-        const res = await updateBook(editingBook._id, bookData);
-        setBooks(books.map((b) => (b._id === editingBook._id ? res.data : b)));
-        setSuccess("Livre modifié avec succès !");
-      } else {
-        // Création
-        const res = await createBook(bookData);
-        setBooks([...books, res.data]);
-        setSuccess("Livre créé avec succès !");
-      }
-
-      setFormData({
-        title: "",
-        authors: "",
-        isbn: "",
-        category: "",
-        language: "",
-        publisher: "",
-        pdfBook: "",
-      });
-      setEditingBook(null);
-      setShowForm(false);
-      setTimeout(() => setSuccess(""), 3000);
-    } catch (err) {
-      setError(err.response?.data?.message || "Erreur lors de l'opération");
     }
+
+    bookData.append("publishedDate", formData.publishedDate);
+    bookData.append("resume", formData.resume);
+
+    for (var value of bookData.values()) {
+      console.log(value);
+    }
+
+    if (editingBook) {
+      // Modification
+      const res = await updateBook(editingBook._id, bookData);
+      setBooks(books.map((b) => (b._id === editingBook._id ? res.data : b)));
+      setSuccess("Livre modifié avec succès !");
+    } else {
+      // Création
+      const res = await createBook(bookData);
+      setBooks([...books, res.data]);
+      setSuccess("Livre créé avec succès !");
+    }
+
+    setFormData({
+      title: "",
+      authors: "",
+      isbn: "",
+      category: "",
+      language: "",
+      publisher: "",
+      pdfBook: null,
+      publishedDate: "",
+      resume: "",
+    });
+
+    setEditingBook(null);
+    setShowForm(false);
+    setTimeout(() => setSuccess(""), 3000);
   };
 
   /* ======================

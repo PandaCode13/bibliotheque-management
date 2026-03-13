@@ -108,12 +108,13 @@ export default function AdminGestionCategories() {
   };
 
   return (
-    <div className="space-y-10 m-5">
+    <div className="space-y-10 px-4 sm:px-6 lg:px-8 py-6">
       {/* ======================
-            AJOUT CATÉGORIE
-      ====================== */}
-      <div className="bg-white p-6 rounded-xl shadow-sm space-y-4">
-        <h2 className="text-xl font-bold text-[#0F4C5C]">
+        AJOUT CATÉGORIE
+  ====================== */}
+
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm space-y-4 max-w-2xl">
+        <h2 className="text-xl sm:text-2xl font-bold text-[#0F4C5C]">
           Ajouter une catégorie
         </h2>
 
@@ -122,8 +123,15 @@ export default function AdminGestionCategories() {
           placeholder="Nom de la catégorie"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg 
-                     focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+          className="
+        w-full
+        px-4 py-2
+        border border-gray-300
+        rounded-lg
+        focus:outline-none
+        focus:ring-2
+        focus:ring-[#9DBEBB]
+      "
         />
 
         <textarea
@@ -131,29 +139,45 @@ export default function AdminGestionCategories() {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full px-4 py-2 border rounded-lg 
-                     focus:outline-none focus:ring-2 focus:ring-[#9DBEBB]"
+          className="
+        w-full
+        px-4 py-2
+        border border-gray-300
+        rounded-lg
+        focus:outline-none
+        focus:ring-2
+        focus:ring-[#9DBEBB]
+      "
         />
 
         <button
           onClick={handleAdd}
-          className="px-6 py-2 bg-[#0F4C5C] text-white 
-                     rounded-lg hover:bg-[#0C3E4B]"
+          className="
+        px-6 py-2
+        bg-[#0F4C5C]
+        text-white
+        rounded-lg
+        hover:bg-[#0C3E4B]
+        transition
+      "
         >
           Ajouter
         </button>
       </div>
 
       {/* ======================
-            TABLEAU CATÉGORIES
-      ====================== */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-[#E6F1F0] text-[#0F4C5C]">
+        TABLEAU CATÉGORIES
+  ====================== */}
+
+      <div className="bg-white rounded-2xl shadow-sm overflow-x-auto">
+        <table className="min-w-full">
+          <thead className="bg-[#E6F1F0] text-[#0F4C5C] text-sm">
             <tr>
               <th className="p-3 text-left">Nom</th>
-              <th className="p-3 text-left">Slug</th>
-              <th className="p-3 text-left">Description</th>
+              <th className="p-3 text-left hidden md:table-cell">Slug</th>
+              <th className="p-3 text-left hidden sm:table-cell">
+                Description
+              </th>
               <th className="p-3 text-center">Actions</th>
             </tr>
           </thead>
@@ -168,8 +192,9 @@ export default function AdminGestionCategories() {
             )}
 
             {categories.map((cat) => (
-              <tr key={cat._id} className="border-t">
-                <td className="p-3">
+              <tr key={cat._id} className="border-t hover:bg-gray-50">
+                {/* NOM */}
+                <td className="p-3 font-medium text-[#0F4C5C]">
                   {editId === cat._id ? (
                     <input
                       value={editName}
@@ -181,9 +206,13 @@ export default function AdminGestionCategories() {
                   )}
                 </td>
 
-                <td className="p-3 text-gray-500">{cat.slug}</td>
+                {/* SLUG */}
+                <td className="p-3 text-gray-500 hidden md:table-cell">
+                  {cat.slug}
+                </td>
 
-                <td className="p-3">
+                {/* DESCRIPTION */}
+                <td className="p-3 hidden sm:table-cell">
                   {editId === cat._id ? (
                     <textarea
                       value={editDescription}
@@ -196,29 +225,53 @@ export default function AdminGestionCategories() {
                   )}
                 </td>
 
-                <td className="p-3 text-center space-x-2">
-                  {editId === cat._id ? (
-                    <button
-                      onClick={() => handleUpdate(cat._id)}
-                      className="px-4 py-1 bg-green-600 text-white rounded"
-                    >
-                      Sauvegarder
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleEdit(cat)}
-                      className="px-4 py-1 bg-blue-600 text-white rounded"
-                    >
-                      Modifier
-                    </button>
-                  )}
+                {/* ACTIONS */}
+                <td className="p-3 text-center">
+                  <div className="flex justify-center flex-wrap gap-2">
+                    {editId === cat._id ? (
+                      <button
+                        onClick={() => handleUpdate(cat._id)}
+                        className="
+                      px-3 py-1
+                      bg-green-600
+                      text-white
+                      rounded
+                      text-sm
+                      hover:bg-green-700
+                    "
+                      >
+                        Sauvegarder
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleEdit(cat)}
+                        className="
+                      px-3 py-1
+                      bg-blue-600
+                      text-white
+                      rounded
+                      text-sm
+                      hover:bg-blue-700
+                    "
+                      >
+                        Modifier
+                      </button>
+                    )}
 
-                  <button
-                    onClick={() => handleDelete(cat._id)}
-                    className="px-4 py-1 bg-red-600 text-white rounded"
-                  >
-                    Supprimer
-                  </button>
+                    <button
+                      onClick={() => handleDelete(cat._id)}
+                      className="
+                    px-3 py-1
+                    bg-red-600
+                    text-white
+                    rounded
+                    text-sm
+                    hover:bg-red-700
+                  "
+                    >
+                      Supprimer
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

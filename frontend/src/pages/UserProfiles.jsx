@@ -105,67 +105,137 @@ export default function UserProfiles() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">
-      <div className="max-w-3xl mx-auto px-6 py-10 display-flex flex-col gap-6">
-        <h1 className="text-3xl font-bold text-[#0F4C5C] mb-6">Mon Profil</h1>
-        {error && <p className="text-center text-red-500 mb-4">{error}</p>}
-        {successMessage && (
-          <p className="text-green-500 text-center mb-4">{successMessage}</p>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        {/* HEADER */}
+        <header className="space-y-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0F4C5C]">
+            Mon Profil
+          </h1>
+          <p className="text-gray-600 text-sm sm:text-base">
+            Gérez vos informations personnelles et votre mot de passe
+          </p>
+        </header>
+
+        {error && (
+          <div className="bg-red-100 text-red-600 p-3 rounded-lg text-center">
+            {error}
+          </div>
         )}
+
+        {successMessage && (
+          <div className="bg-green-100 text-green-600 p-3 rounded-lg text-center">
+            {successMessage}
+          </div>
+        )}
+
         {!user ? (
           <p className="text-center text-red-500">Utilisateur non trouvé</p>
         ) : (
           <>
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+            {/* INFORMATIONS */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm space-y-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#0F4C5C]">
                 Informations personnelles
               </h2>
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Prénom</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="ex. Jean"
-                  disabled={!isEditing}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* PRENOM */}
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Prénom
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    disabled={!isEditing}
+                    className="
+                    w-full
+                    px-4 py-2
+                    border border-gray-300
+                    rounded-lg
+                    focus:ring-2 focus:ring-[#9DBEBB]
+                    focus:outline-none
+                    disabled:bg-gray-100
+                  "
+                  />
+                </div>
+
+                {/* NOM */}
+                <div>
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Nom
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    disabled={!isEditing}
+                    className="
+                    w-full
+                    px-4 py-2
+                    border border-gray-300
+                    rounded-lg
+                    focus:ring-2 focus:ring-[#9DBEBB]
+                    focus:outline-none
+                    disabled:bg-gray-100
+                  "
+                  />
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Nom</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="ex. Dupont"
-                  disabled={!isEditing}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">Email</label>
+
+              {/* EMAIL */}
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   disabled={!isEditing}
-                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  className="
+                  w-full
+                  px-4 py-2
+                  border border-gray-300
+                  rounded-lg
+                  focus:ring-2 focus:ring-[#9DBEBB]
+                  focus:outline-none
+                  disabled:bg-gray-100
+                "
                 />
               </div>
-              <div className="flex justify-end space-x-2">
+
+              {/* BOUTONS */}
+              <div className="flex flex-wrap justify-end gap-3">
                 {isEditing ? (
                   <>
                     <button
                       onClick={() => setIsEditing(false)}
-                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+                      className="
+                      px-4 py-2
+                      rounded-lg
+                      bg-gray-200
+                      hover:bg-gray-300
+                      transition
+                    "
                     >
                       Annuler
                     </button>
+
                     <button
                       onClick={handleSave}
-                      className="px-4 py-2 bg-[#0F4C5C] text-white rounded"
+                      className="
+                      px-4 py-2
+                      rounded-lg
+                      bg-[#0F4C5C]
+                      text-white
+                      hover:bg-[#0C3E4B]
+                      transition
+                    "
                     >
                       Enregistrer
                     </button>
@@ -173,21 +243,30 @@ export default function UserProfiles() {
                 ) : (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 bg-[#0F4C5C] text-white rounded"
+                    className="
+                    px-4 py-2
+                    rounded-lg
+                    bg-[#0F4C5C]
+                    text-white
+                    hover:bg-[#0C3E4B]
+                    transition
+                  "
                   >
                     Modifier
                   </button>
                 )}
               </div>
             </div>
-            {/* Changement de mot de passe avec une option de voir son mot de passe*/}
-            <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+
+            {/* MOT DE PASSE */}
+            <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm space-y-6">
+              <h2 className="text-lg sm:text-xl font-semibold text-[#0F4C5C]">
                 Changer le mot de passe
               </h2>
-              {/* Ancien mot de passe */}
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">
+
+              {/* OLD PASSWORD */}
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
                   Ancien mot de passe
                 </label>
 
@@ -195,24 +274,37 @@ export default function UserProfiles() {
                   <input
                     type={type}
                     name="oldPassword"
-                    placeholder="Ancien mot de passe"
-                    className="w-full border border-gray-300 rounded px-3 py-2 pr-12"
                     onChange={handleChange}
-                    autoComplete="current-password"
+                    className="
+                    w-full
+                    px-4 py-2
+                    border border-gray-300
+                    rounded-lg
+                    pr-10
+                    focus:ring-2 focus:ring-[#9DBEBB]
+                    focus:outline-none
+                  "
                   />
+
                   <button
                     type="button"
                     onClick={handleTogglePasswordVisibility}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="
+                    absolute
+                    right-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-gray-500
+                  "
                   >
                     <Icon icon={icon} width="22" />
                   </button>
                 </div>
               </div>
 
-              {/* Nouveau mot de passe */}
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">
+              {/* NEW PASSWORD */}
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">
                   Nouveau mot de passe
                 </label>
 
@@ -220,31 +312,52 @@ export default function UserProfiles() {
                   <input
                     type={type}
                     name="newPassword"
-                    placeholder="Nouveau mot de passe"
-                    className="w-full border border-gray-300 rounded px-3 py-2 pr-12"
                     onChange={handleChange}
-                    autoComplete="new-password"
+                    className="
+                    w-full
+                    px-4 py-2
+                    border border-gray-300
+                    rounded-lg
+                    pr-10
+                    focus:ring-2 focus:ring-[#9DBEBB]
+                    focus:outline-none
+                  "
                   />
 
                   <button
                     type="button"
                     onClick={handleTogglePasswordVisibility}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="
+                    absolute
+                    right-3
+                    top-1/2
+                    -translate-y-1/2
+                    text-gray-500
+                  "
                   >
                     <Icon icon={icon} width="22" />
                   </button>
                 </div>
               </div>
+
               <button
-                className="px-4 py-2 bg-[#0F4C5C] text-white rounded disabled:opacity-50"
                 onClick={handlePasswordChange}
-                disabled={loadingPwd || !formData.oldPassword || !formData.newPassword}
+                disabled={
+                  loadingPwd || !formData.oldPassword || !formData.newPassword
+                }
+                className="
+                px-4 py-2
+                rounded-lg
+                bg-[#0F4C5C]
+                text-white
+                hover:bg-[#0C3E4B]
+                disabled:opacity-50
+                transition
+              "
               >
                 {loadingPwd ? "Changement..." : "Changer le mot de passe"}
               </button>
             </div>
-
-            {/* Plus de trucs optionnels */}
           </>
         )}
       </div>

@@ -418,6 +418,28 @@ const importBooksFromCSV = async (req, res) => {
   }
 };
 
+const LastBookAdded = async (req, res) => {
+  try {
+    const books = await Book.find()
+      .sort({ createdAt: -1 })
+      .select("title coverImage createdAt category")
+      .limit(5);
+
+    res.status(200).json({
+      success: true,
+      count: books.length,
+      data: books
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur récupération derniers livres",
+      error: error.message
+    });
+  }
+};
+
 /* =========================
    EXPORTS
 ========================= */
@@ -434,4 +456,5 @@ module.exports = {
   addComment,
   getCommentsByBook,
   importBooksFromCSV,
+  LastBookAdded
 };

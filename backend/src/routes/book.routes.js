@@ -7,6 +7,7 @@ const authOptional = require("../middlewares/auth.optional");
 const auth = require("../middlewares/auth.middleware");
 const isAdmin = require("../middlewares/admin.middleware");
 const upload = require("../middlewares/upload");
+const { LastedBooksAdded } = require("../controllers/book.controller");
 
 console.log("createBook:", typeof controller.createBook);
 console.log("updateBook:", typeof controller.updateBook);
@@ -78,5 +79,8 @@ router.post(
   upload.single("file"),
   controller.importBooksFromCSV,
 );
+
+// Fonction pour afficher les 5 derniers livres 
+router.get("/latest", controller.LastBookAdded);
 
 module.exports = router;

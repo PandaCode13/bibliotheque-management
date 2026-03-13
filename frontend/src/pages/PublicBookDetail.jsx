@@ -194,13 +194,22 @@ export default function PublicBookDetail() {
             </div>
           </div>
 
-          <a
-            href={`http://localhost:5000/${book.pdfBook}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Lire le livre
-          </a>
+            {/* Il faut vérifier si book.pdfBook existe avant d’afficher le lien.
+              Si le PDF n’existe pas → afficher un message “Ce livre sera ajouté prochainement”. */}
+          {book?.pdfBook ? (
+            <a
+              href={`http://localhost:5000/${book.pdfBook}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="read-book-btn inline-block mt-4 px-6 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition duration-300"
+            >
+              Lire le livre
+            </a>
+          ) : (
+            <p className="coming-soon mt-4 text-red-500 font-medium">
+              Ce livre sera ajouté prochainement
+            </p>
+          )}
         </article>
 
         {/* Bouton de retour */}
