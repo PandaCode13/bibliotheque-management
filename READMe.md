@@ -100,14 +100,6 @@ Les variables backend actuellement utilisees sont :
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
 - `MONGO_URI`
-
-Exemple :
-
-```env
-PORT=5000
-JWT_SECRET=super_secret_jwt_key
-JWT_EXPIRES_IN=1d
-MONGO_URI=mongodb://127.0.0.1:27017/biblio_db
 ```
 
 ## Documentation detaillee
