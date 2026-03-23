@@ -14,17 +14,22 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    getStats()
-      .then((res) => setStats(res.data))
-      .catch((err) => console.error(err));
-  }, []);
+  const recentBooks = Array.isArray(stats.addedBooks)
+    ? stats.addedBooks
+    : stats.addedBooks?.data || [];
 
   useEffect(() => {
-    if (stats.users || stats.books || stats.categories) {
-      setLoading(false);
-    }
-  }, [stats]);
+    getStats()
+      .then((res) => {
+        setStats(res.data);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 sm:px-6 lg:px-8 py-8">
@@ -60,7 +65,7 @@ export default function AdminDashboard() {
             <h3 className="text-gray-500 font-medium">Utilisateurs</h3>
 
             <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-              👤
+              U
             </div>
           </div>
 
@@ -78,7 +83,7 @@ export default function AdminDashboard() {
             to="/dashboard/admin/users"
             className="inline-block mt-6 text-sm font-medium text-blue-600 hover:text-blue-800 transition"
           >
-            Gérer les utilisateurs →
+            Gerer les utilisateurs -
           </Link>
         </div>
 
@@ -99,23 +104,25 @@ export default function AdminDashboard() {
             <h3 className="text-gray-500 font-medium">Livres</h3>
 
             <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-green-100 text-green-600">
-              📚
+              L
             </div>
           </div>
 
-          {!loading && !error ? (
+          {loading ? (
+            <p className="mt-6 text-gray-400">Chargement...</p>
+          ) : error ? (
+            <p className="mt-6 text-red-500">Erreur : {error.message}</p>
+          ) : (
             <p className="mt-6 text-3xl sm:text-4xl font-bold text-gray-800">
               {stats.books}
             </p>
-          ) : (
-            <p className="mt-6 text-gray-400">Chargement...</p>
           )}
 
           <Link
             to="/dashboard/admin/books"
             className="inline-block mt-6 text-sm font-medium text-green-600 hover:text-green-800 transition"
           >
-            Voir tous les livres →
+            Voir tous les livres -
           </Link>
         </div>
 
@@ -133,51 +140,56 @@ export default function AdminDashboard() {
     "
         >
           <div className="flex items-center justify-between">
-            <h3 className="text-gray-500 font-medium">Catégories</h3>
+            <h3 className="text-gray-500 font-medium">Categories</h3>
 
             <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-purple-100 text-purple-600">
-              🏷️
+              C
             </div>
           </div>
 
-          {!loading && !error ? (
+          {loading ? (
+            <p className="mt-6 text-gray-400">Chargement...</p>
+          ) : error ? (
+            <p className="mt-6 text-red-500">Erreur : {error.message}</p>
+          ) : (
             <p className="mt-6 text-3xl sm:text-4xl font-bold text-gray-800">
               {stats.categories}
             </p>
-          ) : (
-            <p className="mt-6 text-gray-400">Chargement...</p>
           )}
 
           <Link
             to="/dashboard/admin/categories"
             className="inline-block mt-6 text-sm font-medium text-purple-600 hover:text-purple-800 transition"
           >
-            Voir toutes les catégories →
+            Voir toutes les categories -
           </Link>
         </div>
       </div>
 
       {/* DERNIERS LIVRES */}
-      {/* DERNIERS LIVRES */}
       <div className="mt-10">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-semibold text-gray-800">
-            Derniers livres ajoutés
+            Derniers livres ajoutes
           </h3>
 
           <Link
             to="/dashboard/admin/books"
             className="text-sm text-blue-600 hover:text-blue-800"
           >
-            Voir tous →
+            Voir tous -
           </Link>
         </div>
 
-        {!stats.addedBooks?.data || stats.addedBooks.data.length === 0 ? (
-          <p className="text-gray-400">Aucun livre ajouté récemment</p>
+        {loading ? (
+          <p className="text-gray-400">Chargement...</p>
+        ) : error ? (
+          <p className="text-red-500">Erreur : {error.message}</p>
+        ) : recentBooks.length === 0 ? (
+          <p className="text-gray-400">Aucun livre ajoute recemment</p>
         ) : (
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {stats.addedBooks?.slice(0, 5).map((book) => (
+            {recentBooks.slice(0, 5).map((book) => (
               <div
                 key={book._id}
                 className="

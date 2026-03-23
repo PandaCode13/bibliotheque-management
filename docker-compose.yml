@@ -9,9 +9,7 @@ services:
       - mongo_data:/data/db
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: biblio-backend
     restart: unless-stopped
     depends_on:
@@ -27,9 +25,7 @@ services:
       - backend_uploads:/app/uploads
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    build: ./frontend
     container_name: biblio-frontend
     restart: unless-stopped
     depends_on:

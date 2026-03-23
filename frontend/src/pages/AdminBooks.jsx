@@ -16,7 +16,12 @@ export default function AdminBooks() {
   const [showForm, setShowForm] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [Messagepdf, setMessagepdf] = useState("erreur de type de fichier");
+  const [Messagepdf, setMessagepdf] = useState(
+    "Erreur de type de fichier! Le type de pdf doit être PDF ou ePub.",
+  );
+  const [MessageImage, setMessageImage] = useState(
+    "Erreur de type de fichier! Le type de pdf doit être PNG, JPG ou JPEG uniquement.",
+  );
   const [itemsPerPage, setItemsPerPage] = useState(15);
   const [formData, setFormData] = useState({
     title: "",
@@ -24,17 +29,52 @@ export default function AdminBooks() {
     isbn: "",
     category: "",
     language: "",
+    cover: "",
     publisher: "",
     pdfBook: null,
     publishedDate: "",
     resume: "",
-    tags: ""
+    tags: "",
   });
   const [preview, setPreview] = useState(null);
-  const [cover, setCover] = useState(null);
-  const [coverUrl, setCoverUrl] = useState("");
-  const [publishedDate, setPublishedDate] = useState("");
-  const [resume, setResume] = useState("");
+
+  const languages = [
+    "Français",
+    "Anglais",
+    "Espagnol",
+    "Allemand",
+    "Italien",
+    "Portugais",
+    "Arabe",
+    "Chinois",
+    "Japonais",
+    "Coréen",
+    "Russe",
+    "Hindi",
+    "Turc",
+    "Néerlandais",
+    "Polonais",
+    "Suédois",
+    "Norvégien",
+    "Finnois",
+    "Danois",
+    "Grec",
+    "Hébreu",
+    "Thaï",
+    "Vietnamien",
+    "Indonésien",
+    "Malais",
+    "Ukrainien",
+    "Roumain",
+    "Tchèque",
+    "Hongrois",
+    "Slovaque",
+    "Croate",
+    "Serbe",
+    "Bulgare",
+    "Catalan",
+    "Persan",
+  ];
 
   var fileTypes = ["application/pdf", "application/epub+zip"];
 
@@ -82,11 +122,33 @@ export default function AdminBooks() {
 
   const handleCoverChange = (e) => {
     const file = e.target.files[0];
-    setCover(file);
 
-    if (file) {
-      setPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    if (!validImgaeType(file)) {
+      setMessageImage(
+        "Type d'image incorrect. Autorisé : PNG, JPG, JPEG uniquement.",
+      );
+      return;
     }
+
+    setMessageImage("");
+    setCover(file);
+    setPreview(URL.createObjectURL(file));
+  };
+
+  const handlePdfChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    if (!validFileType(file)) {
+      setMessagepdf("Type de fichier invalide (PDF ou EPUB uniquement)");
+      return;
+    }
+
+    setMessagepdf("");
+    setFormData({ ...formData, pdfBook: file });
   };
 
   /* ======================
@@ -94,77 +156,115 @@ export default function AdminBooks() {
   ====================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
 
-    const bookData = new FormData();
+    try {
+      const bookData = new FormData();
 
-    bookData.append("title", formData.title);
-    bookData.append("isbn", formData.isbn);
-    bookData.append("category", formData.category);
-    bookData.append("language", formData.language);
-    bookData.append("publisher", formData.publisher);
-    bookData.append(
-      "authors",
-      JSON.stringify(formData.authors.split(",").map((a) => a.trim())),
-    );
+      /* ======================
+        VALIDATION COVER
+    ====================== */
 
-    if (cover) {
-      bookData.append("cover", cover);
-    } else if (coverUrl.trim() !== "") {
-      bookData.append("coverImage", coverUrl);
-    }
-
-    if (formData.pdfBook && !validFileType(formData.pdfBook)) {
-      setError("Le fichier doit être un PDF ou EPUB");
-      return;
-    }
-
-    if (formData.pdfBook) {
-      if (!validFileType(formData.pdfBook)) {
-        setMessagepdf("Type de fichier invalide");
+      if (!cover) {
+        setError("La couverture du livre est obligatoire");
         return;
-      } else {
-        bookData.append("pdfBook", formData.pdfBook);
       }
+
+      if (!validImgaeType(cover)) {
+        setMessageImage(
+          "Type d'image incorrect. Autorisé : PNG, JPG ou JPEG uniquement.",
+        );
+        return;
+      }
+
+      /* ======================
+        VALIDATION PDF
+    ====================== */
+
+      if (!formData.pdfBook) {
+        setError("Le fichier du livre est obligatoire");
+        return;
+      }
+
+      if (!validFileType(formData.pdfBook)) {
+        setMessagepdf("Type de fichier invalide (PDF ou EPUB uniquement)");
+        return;
+      }
+
+      /* ======================
+        APPEND DATA
+    ====================== */
+
+      bookData.append("title", formData.title);
+      bookData.append("isbn", formData.isbn);
+      bookData.append("category", formData.category);
+      bookData.append("language", formData.language);
+      bookData.append("publisher", formData.publisher);
+
+      bookData.append(
+        "authors",
+        JSON.stringify(formData.authors.split(",").map((a) => a.trim())),
+      );
+
+      bookData.append("coverImage", cover);
+      bookData.append("pdfBook", formData.pdfBook);
+
+      bookData.append("publishedDate", formData.publishedDate);
+      bookData.append("resume", formData.resume);
+      bookData.append("tags", formData.tags);
+
+      /* ======================
+        CREATE / UPDATE
+    ====================== */
+
+      let res;
+
+      if (editingBook) {
+        res = await updateBook(editingBook._id, bookData);
+
+        setBooks(books.map((b) => (b._id === editingBook._id ? res.data : b)));
+
+        setSuccess("Livre modifié avec succès !");
+      } else {
+        res = await createBook(bookData);
+
+        setBooks([...books, res.data]);
+
+        setSuccess("Livre ajouté avec succès !");
+      }
+
+      /* ======================
+        RESET FORM
+    ====================== */
+
+      setFormData({
+        title: "",
+        authors: "",
+        isbn: "",
+        category: "",
+        language: "Français",
+        publisher: "",
+        pdfBook: null,
+        publishedDate: "",
+        resume: "",
+        tags: "",
+      });
+
+      setCover(null);
+      setPreview(null);
+
+      setEditingBook(null);
+      setShowForm(false);
+
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message || "Erreur lors de l'enregistrement",
+      );
     }
-
-    bookData.append("publishedDate", formData.publishedDate);
-    bookData.append("resume", formData.resume);
-    bookData.append("tags", formData.tags);
-
-    for (var value of bookData.values()) {
-      console.log(value);
-    }
-
-    if (editingBook) {
-      // Modification
-      const res = await updateBook(editingBook._id, bookData);
-      setBooks(books.map((b) => (b._id === editingBook._id ? res.data : b)));
-      setSuccess("Livre modifié avec succès !");
-    } else {
-      // Création
-      const res = await createBook(bookData);
-      setBooks([...books, res.data]);
-      setSuccess("Livre créé avec succès !");
-    }
-
-    setFormData({
-      title: "",
-      authors: "",
-      isbn: "",
-      category: "",
-      language: "",
-      publisher: "",
-      pdfBook: null,
-      publishedDate: "",
-      resume: "",
-      tags: "",
-    });
-
-    setEditingBook(null);
-    setShowForm(false);
-    setTimeout(() => setSuccess(""), 3000);
   };
 
   /* ======================
@@ -182,7 +282,7 @@ export default function AdminBooks() {
       pdfBook: book.pdfBook || "",
       publishedDate: book.publishedDate || "",
       resume: book.resume || "",
-      tags: book.tags || ""
+      tags: book.tags || "",
     });
     setShowForm(true);
   };
@@ -290,157 +390,169 @@ export default function AdminBooks() {
         </button>
 
         {showForm && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-            <h3 className="text-lg font-bold text-[#0F4C5C] mb-4">
-              {editingBook ? "Modifier le livre" : "Ajouter un nouveau livre"}
-            </h3>
-            <form
-              onSubmit={handleSubmit}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              <input
-                type="text"
-                name="title"
-                placeholder="Titre"
-                value={formData.title || ""}
-                onChange={handleFormChange}
-                required
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <input
-                type="text"
-                name="authors"
-                placeholder="Auteurs (séparés par ,)"
-                value={formData.authors || ""}
-                onChange={handleFormChange}
-                required
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <input
-                type="text"
-                name="isbn"
-                placeholder="ISBN"
-                value={formData.isbn || ""}
-                required
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <select
-                name="category"
-                value={formData.category || ""}
-                onChange={handleFormChange}
-                required
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+            <div className="bg-white w-[900px] max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl p-8 relative">
+              <button
+                onClick={() => setShowForm(false)}
+                className="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-xl"
               >
-                <option value="">Sélectionnez une catégorie</option>
-                {categories.map((c) => (
-                  <option key={c._id} value={c._id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                ✕
+              </button>
 
-              <input
-                type="text"
-                name="language"
-                required
-                placeholder="Langue"
-                value={formData.language || ""}
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
+              <h3 className="text-2xl font-bold text-[#0F4C5C] mb-6 text-center">
+                {editingBook ? "Modifier le livre" : "Ajouter un livre"}
+              </h3>
 
-              <input
-                type="text"
-                name="publisher"
-                required
-                placeholder="Éditeur"
-                value={formData.publisher || ""}
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <div id="coverImage">
-                <label htmlFor="">Couverture de l'image</label>
+              <form
+                onSubmit={handleSubmit}
+                className="grid grid-cols-1 md:grid-cols-2 gap-5"
+              >
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Titre du livre"
+                  value={formData.title}
+                  onChange={handleFormChange}
+                  required
+                  className="input-style"
+                />
 
                 <input
-                  type="file"
-                  accept="image/*"
+                  type="text"
+                  name="authors"
+                  placeholder="Auteurs (séparés par ,)"
+                  value={formData.authors}
+                  onChange={handleFormChange}
                   required
-                  onChange={handleCoverChange}
-                  placeholder="Couverture du livre"
-                  className="px-4 py-2 border rounded-lg"
+                  className="input-style"
                 />
-              </div>
-
-              <div id="pdfBool">
-                <label htmlFor="">Insérer le pdf du livre</label>
 
                 <input
-                  type="file"
-                  name="pdfBook"
+                  type="text"
+                  name="isbn"
+                  placeholder="ISBN"
+                  value={formData.isbn}
+                  onChange={handleFormChange}
                   required
-                  accept=".pdf,.epub"
-                  onChange={(e) =>
-                    setFormData({ ...formData, pdfBook: e.target.files[0] })
-                  }
-                  className="px-4 py-2 border rounded-lg"
+                  className="input-style"
                 />
-              </div>
 
-              <input
-                type="date"
-                name="publishedDate"
-                id="publishedDate"
-                required
-                placeholder="Date de publication (YYYY-MM-DD)"
-                value={formData.publishedDate || ""}
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <textarea
-                type="text"
-                name="resume"
-                placeholder="Résumé"
-                required
-                value={formData.resume || ""}
-                onChange={handleFormChange}
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <input type="text" 
-                name="tags"
-                placeholder="Tags ex: PHP, programmation"
-                value={formData.tags || ""}
-                onChange={handleFormChange}
-                required
-                className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#0F4C5C]"
-              />
-
-              <div className="flex gap-2 md:col-span-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                {/* CATEGORY */}
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleFormChange}
+                  required
+                  className="input-style"
                 >
-                  {editingBook ? "Modifier" : "Créer"}
-                </button>
+                  <option value="">Choisir une catégorie</option>
+                  {categories.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditingBook(null);
-                  }}
-                  className="flex-1 px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                {/* LANGUAGES */}
+                <select
+                  name="language"
+                  value={formData.language || "Français"}
+                  onChange={handleFormChange}
+                  className="input-style"
                 >
-                  Annuler
-                </button>
-              </div>
-            </form>
+                  {languages.map((lang, i) => (
+                    <option key={i} value={lang}>
+                      {lang}
+                    </option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  name="publisher"
+                  placeholder="Éditeur"
+                  value={formData.publisher}
+                  onChange={handleFormChange}
+                  required
+                  className="input-style"
+                />
+
+                {/* COVER */}
+                <div className="flex flex-col">
+                  <label className="font-semibold">Couverture</label>
+
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg"
+                    onChange={handleCoverChange}
+                    className="input-style"
+                  />
+
+                  {MessageImage && (
+                    <p className="text-red-500 text-sm mt-1">{MessageImage}</p>
+                  )}
+                </div>
+
+                {/* PDF */}
+                <div className="flex flex-col">
+                  <label className="font-semibold">PDF / EPUB</label>
+
+                  <input
+                    type="file"
+                    accept=".pdf,.epub"
+                    onChange={handlePdfChange}
+                    className="input-style"
+                  />
+
+                  {Messagepdf && (
+                    <p className="text-red-500 text-sm mt-1">{Messagepdf}</p>
+                  )}
+                </div>
+
+                <input
+                  type="date"
+                  name="publishedDate"
+                  value={formData.publishedDate}
+                  onChange={handleFormChange}
+                  required
+                  className="input-style"
+                />
+
+                <textarea
+                  name="resume"
+                  placeholder="Résumé du livre"
+                  value={formData.resume}
+                  onChange={handleFormChange}
+                  className="input-style md:col-span-2"
+                />
+
+                <input
+                  type="text"
+                  name="tags"
+                  placeholder="Tags (ex: programmation, PHP)"
+                  value={formData.tags}
+                  onChange={handleFormChange}
+                  className="input-style md:col-span-2"
+                />
+
+                <div className="flex gap-4 md:col-span-2 mt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold"
+                  >
+                    {editingBook ? "Modifier" : "Créer"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="flex-1 bg-gray-400 hover:bg-gray-500 text-white py-3 rounded-lg"
+                  >
+                    Annuler
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </div>
