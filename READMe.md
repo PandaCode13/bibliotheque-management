@@ -96,10 +96,13 @@ Services exposes :
 
 Les variables backend actuellement utilisees sont :
 
+```bash
+
 - `PORT`
 - `JWT_SECRET`
 - `JWT_EXPIRES_IN`
 - `MONGO_URI`
+
 ```
 
 ## Documentation detaillee
