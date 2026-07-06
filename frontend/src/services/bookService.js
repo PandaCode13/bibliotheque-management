@@ -70,3 +70,6 @@ export const importBooks = (file) => {
 };
 
 export const LastedBooksAdded = () => api.get("/books/latest");
+
+const res = await axios.get("/api/books/recent");
+setRecentBooks(res.data.data);

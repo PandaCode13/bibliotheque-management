@@ -440,6 +440,31 @@ const LastBookAdded = async (req, res) => {
   }
 };
 
+// Admin getLastBooks
+const getRecentBooks = async (req, res) => {
+  try {
+    const books = await Book.find({ visible: true }) // optionnel mais recommandé
+      .populate("category", "name") // ⚠️ nécessaire pour book.category.name
+      .sort({ createdAt: -1 }) // derniers livres
+      .limit(5) // 5 livres
+      .select("title authors coverImage category createdAt"); // champs utiles
+
+    res.status(200).json({
+      success: true,
+      data: books, // ⚠️ IMPORTANT pour ton frontend
+    });
+
+  } catch (error) {
+    console.error("GET RECENT BOOKS ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Erreur récupération des livres récents",
+      error: error.message,
+    });
+  }
+};
+
 /* =========================
    EXPORTS
 ========================= */
@@ -456,5 +481,6 @@ module.exports = {
   addComment,
   getCommentsByBook,
   importBooksFromCSV,
-  LastBookAdded
+  LastBookAdded,
+  getRecentBooks
 };

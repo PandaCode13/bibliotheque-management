@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getStats } from "../services/userService";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 // frontend/src/pages/AdminDashboard.jsx
 export default function AdminDashboard() {
@@ -14,21 +14,20 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const recentBooks = Array.isArray(stats.addedBooks)
-    ? stats.addedBooks
-    : stats.addedBooks?.data || [];
-
   useEffect(() => {
-    getStats()
-      .then((res) => {
-        setStats(res.data);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(err);
-      })
-      .finally(() => setLoading(false));
+    const fetchRecentBooks = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("/api/books/recent");
+        setRecentBooks(res.data.data); // ⚠️ important
+      } catch (err) {
+        setError("Erreur chargement livres");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentBooks();
   }, []);
 
   return (
@@ -83,7 +82,7 @@ export default function AdminDashboard() {
             to="/dashboard/admin/users"
             className="inline-block mt-6 text-sm font-medium text-blue-600 hover:text-blue-800 transition"
           >
-            Gerer les utilisateurs -
+            Gerer les utilisateurs &#8594;
           </Link>
         </div>
 
@@ -122,7 +121,7 @@ export default function AdminDashboard() {
             to="/dashboard/admin/books"
             className="inline-block mt-6 text-sm font-medium text-green-600 hover:text-green-800 transition"
           >
-            Voir tous les livres -
+            Voir tous les livres &#8594;
           </Link>
         </div>
 
@@ -161,7 +160,7 @@ export default function AdminDashboard() {
             to="/dashboard/admin/categories"
             className="inline-block mt-6 text-sm font-medium text-purple-600 hover:text-purple-800 transition"
           >
-            Voir toutes les categories -
+            Voir toutes les categories &#8594;
           </Link>
         </div>
       </div>
@@ -177,45 +176,35 @@ export default function AdminDashboard() {
             to="/dashboard/admin/books"
             className="text-sm text-blue-600 hover:text-blue-800"
           >
-            Voir tous -
+            Voir tous
           </Link>
         </div>
 
         {loading ? (
           <p className="text-gray-400">Chargement...</p>
         ) : error ? (
-          <p className="text-red-500">Erreur : {error.message}</p>
+          <p className="text-red-500">Erreur : {error}</p>
         ) : recentBooks.length === 0 ? (
-          <p className="text-gray-400">Aucun livre ajoute recemment</p>
+          <p className="text-gray-400">Aucun livre ajouté récemment</p>
         ) : (
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {recentBooks.slice(0, 5).map((book) => (
+            {recentBooks.map((book) => (
               <div
                 key={book._id}
-                className="
-          bg-white
-          border border-gray-100
-          rounded-xl
-          shadow-sm
-          hover:shadow-lg
-          transition
-          overflow-hidden
-        "
+                className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
-                {/* IMAGE */}
                 <img
                   src={
                     book.coverImage
                       ? book.coverImage.startsWith("http")
                         ? book.coverImage
-                        : `http://localhost:5000/${book.coverImage}`
+                        : `${BASE_URL}/${book.coverImage}`
                       : "/placeholder-book.svg"
                   }
                   alt={book.title}
                   className="h-40 w-full object-cover"
                 />
 
-                {/* INFOS */}
                 <div className="p-4 space-y-2">
                   <h4 className="text-sm font-semibold text-gray-800 line-clamp-2">
                     {book.title}
@@ -233,18 +222,7 @@ export default function AdminDashboard() {
 
                   <Link
                     to={`/dashboard/admin/books/edit/${book._id}`}
-                    className="
-              block
-              text-center
-              text-sm
-              mt-2
-              bg-blue-600
-              text-white
-              py-1.5
-              rounded
-              hover:bg-blue-700
-              transition
-            "
+                    className="block text-center text-sm mt-2 bg-blue-600 text-white py-1.5 rounded hover:bg-blue-700 transition"
                   >
                     Modifier
                   </Link>
